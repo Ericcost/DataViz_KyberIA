@@ -5,6 +5,7 @@ const APP = {
     position: null,
     scoreSet: 1,
     setFilter: "",
+    selectedLinks: {},
   },
 };
 
@@ -1040,6 +1041,7 @@ function renderServiceSequenceSankey(events) {
   const values = [];
   const linkColors = [];
 
+  let linkIndex = 0;
   Object.entries(links).forEach(([linkKey, count]) => {
     const [fromKey, toKey] = linkKey.split("→");
     const source = nodeIndex[fromKey];
@@ -1047,14 +1049,26 @@ function renderServiceSequenceSankey(events) {
     if (source == null || target == null) return;
 
     const sourceNode = nodeMeta[source];
-    const linkColor = sourceNode.side === "own"
-      ? "rgba(0, 102, 255, 0.4)"    // Bleu pour France
-      : "rgba(0, 0, 0, 0.4)";        // Noir pour Paraguay
+    const step = sourceNode.step;
+    const isSelected = APP.state.selectedLinks[step] === linkIndex;
+    const hasSelectionOnThisStep = APP.state.selectedLinks[step] != null;
+
+    let linkColor;
+    const baseColor = sourceNode.side === "own" ? "rgba(0, 102, 255" : "rgba(0, 0, 0";
+
+    if (isSelected) {
+      linkColor = baseColor + ", 0.8)";      // Saturé quand sélectionné
+    } else if (hasSelectionOnThisStep) {
+      linkColor = baseColor + ", 0.1)";      // Très léger quand d'autres sont sélectionnés
+    } else {
+      linkColor = baseColor + ", 0.3)";      // Léger par défaut
+    }
 
     sources.push(source);
     targets.push(target);
     values.push(count);
     linkColors.push(linkColor);
+    linkIndex++;
   });
 
   const nodeColorsWithTeam = nodeColors.map((color, idx) => {
@@ -1088,6 +1102,33 @@ function renderServiceSequenceSankey(events) {
   };
 
   Plotly.newPlot(chart, [trace], { height: 700, margin: { l: 10, r: 10, t: 10, b: 10 }, paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)" });
+
+  chart.on("plotly_click", (data) => {
+    const pointData = data.points[0];
+    if (pointData.pointNumber == null) return;
+
+    const linkIdx = pointData.pointNumber;
+    let currentLink = 0;
+
+    Object.entries(links).forEach(([linkKey, count]) => {
+      const [fromKey, toKey] = linkKey.split("→");
+      const source = nodeIndex[fromKey];
+      if (source == null) return;
+
+      if (currentLink === linkIdx) {
+        const sourceNode = nodeMeta[source];
+        const step = sourceNode.step;
+
+        if (APP.state.selectedLinks[step] === linkIdx) {
+          delete APP.state.selectedLinks[step];
+        } else {
+          APP.state.selectedLinks[step] = linkIdx;
+        }
+        render();
+      }
+      currentLink++;
+    });
+  });
 }
 
 function getFullRallies(scopedEvents, allEvents) {
