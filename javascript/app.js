@@ -4,9 +4,19 @@ const APP = {
     category: null,
     position: null,
     scoreSet: 1,
+    scoreCategory: null,
     setFilter: "",
     selectedLinks: {},
   },
+};
+
+const POS_INFO = {
+  1: { title: "Zone arrière droite", desc: "Serveur en rotation — libéro ou passeur défensif. Joue en défense à l'arrière droit du terrain." },
+  2: { title: "Ailier droit (avant)", desc: "Attaquant de couloir droit, souvent réceptionneur-attaquant. Frappe depuis la zone avant droite." },
+  3: { title: "Central avant", desc: "Attaquant rapide en 1er tempo et bloqueur principal. Joue au centre du filet pour couper les accès." },
+  4: { title: "Ailier gauche (avant)", desc: "Attaquant principal : reçoit la majorité des ballons d'attaque. Zone de fort volume offensif." },
+  5: { title: "Zone arrière gauche", desc: "Défenseur, souvent remplacé par le libéro en réception. Protège l'arrière gauche du terrain." },
+  6: { title: "Zone arrière centrale", desc: "Poste du libéro : spécialiste de la réception et de la défense. Joue au centre de l'arrière." },
 };
 
 const CAT_COLORS = {
@@ -40,14 +50,58 @@ async function init() {
     return;
   }
   normalizeReceptions(APP.data.events);
-  bindScoreSetControl();
   bindSetFilterControl();
+  bindScoreSetControl();
+  bindScoreCategoryButtons();
+  initExplainerCourt();
   render();
 }
 
+function initExplainerCourt() {
+  const groups = document.querySelectorAll(".court-pos-group");
+  const info = document.getElementById("courtHoverInfo");
+  if (!info) return;
+
+  groups.forEach((g) => {
+    const pos = Number(g.dataset.pos);
+    const circle = g.querySelector("circle");
+    const origFill = circle ? circle.getAttribute("fill") : null;
+    const origStroke = circle ? circle.getAttribute("stroke") : null;
+
+    g.addEventListener("mouseenter", () => {
+      if (circle && origStroke) {
+        circle.setAttribute("fill", origStroke);
+        circle.setAttribute("fill-opacity", "0.28");
+      }
+      const data = POS_INFO[pos];
+      if (data) {
+        info.innerHTML = `<strong class="court-hover-pos">Poste ${pos} — ${data.title}</strong><p class="court-hover-desc">${data.desc}</p>`;
+      }
+    });
+
+    g.addEventListener("mouseleave", () => {
+      if (circle) {
+        circle.setAttribute("fill", origFill);
+        circle.setAttribute("fill-opacity", "1");
+      }
+      info.innerHTML = '<span class="court-hover-hint">Survolez un poste pour en savoir plus</span>';
+    });
+  });
+}
+
+function bindScoreCategoryButtons() {
+  document.querySelectorAll(".score-cat-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const cat = btn.dataset.cat || null;
+      APP.state.scoreCategory = cat;
+      render();
+    });
+  });
+}
+
 function render() {
-  syncScoreSetSelect();
   syncSetFilterSelect();
+  syncScoreSetSelect();
   const filtered = getFilteredEvents();
   renderSummary(filtered);
   renderKpis(filtered);
@@ -55,7 +109,7 @@ function render() {
   renderSunburst(filtered);
   renderDetail(filtered);
   renderServiceSequenceSankey(filtered);
-  renderScoreboard(filtered);
+  renderScoreboard();
 }
 
 function getFilteredEvents() {
@@ -105,8 +159,8 @@ function renderSummary(events) {
 
   const { rallyCount } = getVisibleRallyStats(events);
   summary.innerHTML = activeFilters.length
-    ? `Vue filtrée — ${activeFilters.join(" · ")} → <strong>${events.length}</strong> événement(s) sur <strong>${rallyCount}</strong> rallye(s)`
-    : `Vue unique — <strong>${events.length}</strong> événements de notre équipe sur <strong>${rallyCount}</strong> rallye(s)`;
+    ? `Filtres actifs — ${activeFilters.join(" · ")} → <strong>${events.length}</strong> événement(s) sur <strong>${rallyCount}</strong> rallye(s)`
+    : "";
 }
 
 function renderKpis(events) {
@@ -1293,78 +1347,127 @@ function rgba(hex, alpha) {
   return `rgba(${r},${g},${b},${alpha})`;
 }
 
-function renderScoreboard(events) {
-  const chart = document.getElementById("scoreboardChart");
-  const selectedSet = String(APP.state.scoreSet || 1);
-  const setEvents = events.filter((event) => String(event.set) === selectedSet);
+function buildSetScoreData(setNo) {
+  const allEvents = APP.data.events.filter((e) => parseSetFromRally(e.rally) === String(setNo));
 
-  if (!setEvents.length) {
-    chart.innerHTML = '<div class="detail-item">Aucune donnée à afficher.</div>';
+  const byRally = {};
+  allEvents.forEach((e) => {
+    byRally[e.rally] = byRally[e.rally] || [];
+    byRally[e.rally].push(e);
+  });
+  Object.values(byRally).forEach((evts) => evts.sort((a, b) => (a.seq || 0) - (b.seq || 0)));
+
+  const rallyKeys = Object.keys(byRally).sort((a, b) => {
+    const na = Number(String(a).split("-")[1] || 0);
+    const nb = Number(String(b).split("-")[1] || 0);
+    return na - nb;
+  });
+
+  let fr = 0, py = 0;
+  const frProg = [0];
+  const pyProg = [0];
+  const rallyCatData = [];
+
+  rallyKeys.forEach((key) => {
+    const evts = byRally[key];
+    const winner = getPointWinner(evts);
+    if (winner === "own") fr++;
+    else py++;
+    frProg.push(fr);
+    pyProg.push(py);
+
+    const cat = APP.state.scoreCategory;
+    const catEvt = cat ? evts.find((e) => e.category === cat) : null;
+    rallyCatData.push(catEvt ? (catEvt.subcategory || "Non précisé") : null);
+  });
+
+  return { frProg, pyProg, rallyCatData };
+}
+
+function syncScoreCategoryButtons() {
+  document.querySelectorAll(".score-cat-btn").forEach((btn) => {
+    const cat = btn.dataset.cat || null;
+    btn.classList.toggle("active", cat === APP.state.scoreCategory);
+  });
+}
+
+function renderScoreCatLegend(subcatColors) {
+  const legend = document.getElementById("scoreCatLegend");
+  if (!legend) return;
+  const entries = Object.entries(subcatColors);
+  if (!entries.length) {
+    legend.innerHTML = "";
     return;
   }
+  legend.innerHTML = entries
+    .map(([sub, color]) => `<span class="score-cat-legend-item"><span class="score-cat-legend-swatch" style="background:${color}"></span>${sub}</span>`)
+    .join("");
+}
 
-  const pointIds = new Set(setEvents.map((event) => event.point));
-  const pointGroups = {};
+function renderScoreboard() {
+  const chart = document.getElementById("scoreboardChart");
+  if (!chart) return;
+  const setNo = APP.state.scoreSet || 1;
 
-  APP.data.events.forEach((event) => {
-    if (String(event.set) !== selectedSet || !pointIds.has(event.point)) return;
-    pointGroups[event.point] ||= [];
-    pointGroups[event.point].push(event);
-  });
+  syncScoreCategoryButtons();
 
-  const orderedPointIds = Object.keys(pointGroups).sort((a, b) => {
-    const pointA = Number((a.match(/-P(\d+)$/) || [])[1] || 0);
-    const pointB = Number((b.match(/-P(\d+)$/) || [])[1] || 0);
-    return pointA - pointB;
-  });
+  let frProg, pyProg, rallyCatData;
 
-  const ownX = [];
-  const ownY = [];
-  const oppX = [];
-  const oppY = [];
-  let ownScore = 0;
-  let oppScore = 0;
+  if (APP.state.scoreCategory) {
+    ({ frProg, pyProg, rallyCatData } = buildSetScoreData(setNo));
+  } else {
+    const allSets = getSyntheticSetScores();
+    const setData = allSets.find((s) => s.set === setNo);
+    if (!setData) return;
+    frProg = setData.progression.map((p) => p[0]);
+    pyProg = setData.progression.map((p) => p[1]);
+    rallyCatData = [];
+  }
 
-  orderedPointIds.forEach((pointId, index) => {
-    const pointEvents = pointGroups[pointId]
-      .slice()
-      .sort((a, b) => a.seq - b.seq || Number((a.rally.match(/-(\d+)$/) || [])[1] || 0) - Number((b.rally.match(/-(\d+)$/) || [])[1] || 0));
-    const winner = getPointWinner(pointEvents);
+  const x = frProg.map((_, i) => i);
 
-    if (winner === "own") ownScore += 1;
-    else oppScore += 1;
+  const shapes = [];
+  const subcatColors = {};
 
-    ownX.push(index + 1);
-    ownY.push(ownScore);
-    oppX.push(index + 1);
-    oppY.push(oppScore);
-  });
+  if (APP.state.scoreCategory && rallyCatData.length) {
+    const subkeys = [...new Set(rallyCatData.filter(Boolean))].sort();
+    const palette = buildSubcategoryPalette(subkeys, CAT_COLORS[APP.state.scoreCategory]);
+    subkeys.forEach((k) => (subcatColors[k] = palette[k]));
 
-  const traces = [
+    rallyCatData.forEach((subcat, i) => {
+      if (!subcat) return;
+      shapes.push({
+        type: "rect",
+        xref: "x",
+        yref: "paper",
+        x0: i + 0.5,
+        x1: i + 1.5,
+        y0: 0,
+        y1: 1,
+        fillcolor: rgba(subcatColors[subcat] || "#888888", 0.22),
+        line: { width: 0 },
+        layer: "below",
+      });
+    });
+  }
+
+  Plotly.newPlot(
+    chart,
+    [
+      { x, y: frProg, type: "scatter", mode: "lines", line: { color: "#185FA5", width: 2.5 }, name: `France – Set ${setNo}` },
+      { x, y: pyProg, type: "scatter", mode: "lines", line: { color: "#B4441C", width: 2.2, dash: "dot" }, name: `Paraguay – Set ${setNo}` },
+    ],
     {
-      x: ownX,
-      y: ownY,
-      type: "scatter",
-      mode: "lines",
-      line: { color: "#185FA5", width: 2.5 },
-      name: `Nous - Set ${selectedSet}`,
-    },
-    {
-      x: oppX,
-      y: oppY,
-      type: "scatter",
-      mode: "lines",
-      line: { color: "#B4441C", width: 2.2, dash: "dot" },
-      name: `Adversaire - Set ${selectedSet}`,
-    },
-  ];
+      height: 340,
+      margin: { l: 10, r: 10, t: 10, b: 40 },
+      xaxis: { title: "Rally n°" },
+      yaxis: { title: "Points cumulés" },
+      paper_bgcolor: "rgba(0,0,0,0)",
+      plot_bgcolor: "rgba(0,0,0,0)",
+      legend: { orientation: "h", y: -0.2 },
+      shapes,
+    }
+  );
 
-  Plotly.newPlot(chart, traces, {
-    height: 340,
-    margin: { l: 10, r: 10, t: 30, b: 10 },
-    xaxis: { title: "Point n°" },
-    yaxis: { title: "Points cumulés" },
-    paper_bgcolor: "rgba(0,0,0,0)",
-    plot_bgcolor: "rgba(0,0,0,0)",
-  });
+  renderScoreCatLegend(subcatColors);
 }

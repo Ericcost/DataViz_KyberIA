@@ -10,22 +10,141 @@
   <body>
     <div class="app-shell">
       <header class="hero">
-        <div>
-          <p class="eyebrow">Kyber IA</p>
-          <h1>France 3 - Paraguay 1</h1>
-          <p class="subtitle">Scenario de match : victoire 3-1 de la France au volley.</p>
+        <div class="hero-content">
+          <p class="hero-brand">Kyber IA</p>
+          <h1>France <span class="score-win">3</span> – <span class="score-loss">1</span> Paraguay</h1>
+          <div class="set-scores">
+            <span class="set-badge win">S1 25–23</span>
+            <span class="set-badge win">S2 25–22</span>
+            <span class="set-badge loss">S3 24–26</span>
+            <span class="set-badge win">S4 25–21</span>
+          </div>
         </div>
-        <div class="badge">Vue unique</div>
       </header>
 
-<section class="panel">
+      <section class="panel explainer-panel">
+        <div class="panel-header">
+          <h2>Le terrain de volley-ball</h2>
+          <p>Survolez un poste pour découvrir son rôle.</p>
+        </div>
+        <div class="explainer-body">
+          <svg viewBox="0 0 480 420" class="explainer-court" xmlns="http://www.w3.org/2000/svg">
+            <!-- Court background -->
+            <rect x="100" y="20" width="280" height="380" rx="10" fill="#f0f6ff" stroke="#6ca9e8" stroke-width="2"/>
+            <!-- Net -->
+            <line x1="100" y1="210" x2="380" y2="210" stroke="#14213d" stroke-width="3" stroke-dasharray="6,4"/>
+            <text x="390" y="215" font-size="11" fill="#14213d" font-weight="700">Filet</text>
+            <!-- Zone labels -->
+            <text x="240" y="14" text-anchor="middle" font-size="12" fill="#64748b" font-weight="600">Terrain adverse</text>
+            <text x="240" y="415" text-anchor="middle" font-size="12" fill="#64748b" font-weight="600">Notre terrain</text>
+            <!-- Opponent positions (top) -->
+            <g class="court-pos-group" data-pos="4" data-side="opp" style="cursor:pointer">
+              <circle cx="150" cy="110" r="22" fill="#fdf3e3" stroke="#d48b30" stroke-width="2"/>
+              <text x="150" y="115" text-anchor="middle" font-size="15" font-weight="800" fill="#b36a10" style="pointer-events:none">4</text>
+            </g>
+            <g class="court-pos-group" data-pos="3" data-side="opp" style="cursor:pointer">
+              <circle cx="240" cy="110" r="22" fill="#fdf3e3" stroke="#d48b30" stroke-width="2"/>
+              <text x="240" y="115" text-anchor="middle" font-size="15" font-weight="800" fill="#b36a10" style="pointer-events:none">3</text>
+            </g>
+            <g class="court-pos-group" data-pos="2" data-side="opp" style="cursor:pointer">
+              <circle cx="330" cy="110" r="22" fill="#fdf3e3" stroke="#d48b30" stroke-width="2"/>
+              <text x="330" y="115" text-anchor="middle" font-size="15" font-weight="800" fill="#b36a10" style="pointer-events:none">2</text>
+            </g>
+            <g class="court-pos-group" data-pos="5" data-side="opp" style="cursor:pointer">
+              <circle cx="150" cy="165" r="22" fill="#fdf3e3" stroke="#d48b30" stroke-width="2"/>
+              <text x="150" y="170" text-anchor="middle" font-size="15" font-weight="800" fill="#b36a10" style="pointer-events:none">5</text>
+            </g>
+            <g class="court-pos-group" data-pos="6" data-side="opp" style="cursor:pointer">
+              <circle cx="240" cy="165" r="22" fill="#fdf3e3" stroke="#d48b30" stroke-width="2"/>
+              <text x="240" y="170" text-anchor="middle" font-size="15" font-weight="800" fill="#b36a10" style="pointer-events:none">6</text>
+            </g>
+            <g class="court-pos-group" data-pos="1" data-side="opp" style="cursor:pointer">
+              <circle cx="330" cy="165" r="22" fill="#fdf3e3" stroke="#d48b30" stroke-width="2"/>
+              <text x="330" y="170" text-anchor="middle" font-size="15" font-weight="800" fill="#b36a10" style="pointer-events:none">1</text>
+            </g>
+            <!-- Our positions (bottom) -->
+            <g class="court-pos-group" data-pos="4" data-side="own" style="cursor:pointer">
+              <circle cx="150" cy="260" r="22" fill="#e8f2fb" stroke="#185fa5" stroke-width="2"/>
+              <text x="150" y="265" text-anchor="middle" font-size="15" font-weight="800" fill="#185fa5" style="pointer-events:none">4</text>
+            </g>
+            <g class="court-pos-group" data-pos="3" data-side="own" style="cursor:pointer">
+              <circle cx="240" cy="260" r="22" fill="#e8f2fb" stroke="#185fa5" stroke-width="2"/>
+              <text x="240" y="265" text-anchor="middle" font-size="15" font-weight="800" fill="#185fa5" style="pointer-events:none">3</text>
+            </g>
+            <g class="court-pos-group" data-pos="2" data-side="own" style="cursor:pointer">
+              <circle cx="330" cy="260" r="22" fill="#e8f2fb" stroke="#185fa5" stroke-width="2"/>
+              <text x="330" y="265" text-anchor="middle" font-size="15" font-weight="800" fill="#185fa5" style="pointer-events:none">2</text>
+            </g>
+            <g class="court-pos-group" data-pos="5" data-side="own" style="cursor:pointer">
+              <circle cx="150" cy="330" r="22" fill="#e8f2fb" stroke="#185fa5" stroke-width="2"/>
+              <text x="150" y="335" text-anchor="middle" font-size="15" font-weight="800" fill="#185fa5" style="pointer-events:none">5</text>
+            </g>
+            <g class="court-pos-group" data-pos="6" data-side="own" style="cursor:pointer">
+              <circle cx="240" cy="330" r="22" fill="#e8f2fb" stroke="#185fa5" stroke-width="2"/>
+              <text x="240" y="335" text-anchor="middle" font-size="15" font-weight="800" fill="#185fa5" style="pointer-events:none">6</text>
+            </g>
+            <g class="court-pos-group" data-pos="1" data-side="own" style="cursor:pointer">
+              <circle cx="330" cy="330" r="22" fill="#e8f2fb" stroke="#185fa5" stroke-width="2"/>
+              <text x="330" y="335" text-anchor="middle" font-size="15" font-weight="800" fill="#185fa5" style="pointer-events:none">1</text>
+            </g>
+          </svg>
+          <div id="courtHoverInfo" class="court-hover-info">
+            <span class="court-hover-hint">Survolez un poste pour en savoir plus</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="filtersSummary" class="summary"></section>
+
+      <div class="kpi-sunburst-grid">
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Statistiques</h2>
+            <p>Vue globale de notre équipe.</p>
+          </div>
+          <section id="kpiGrid" class="kpi-grid"></section>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Détail</h2>
+            <p>Cliquez sur une catégorie pour zoomer.</p>
+          </div>
+          <div class="detail-filter">
+            <label for="setFilterSelect">Filtrer par set :</label>
+            <select id="setFilterSelect" class="score-select">
+              <option value="">Tous les sets</option>
+              <option value="1">Set 1</option>
+              <option value="2">Set 2</option>
+              <option value="3">Set 3</option>
+              <option value="4">Set 4</option>
+            </select>
+          </div>
+          <div id="sunburstChart"></div>
+          <details class="detail-collapse">
+            <summary>Voir le détail des actions</summary>
+            <div id="detailList"></div>
+            <div id="detailTable"></div>
+          </details>
+        </article>
+      </div>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Terrain</h2>
+          <p>Cliquez sur un poste pour filtrer les événements.</p>
+        </div>
+        <div id="courtContainer"></div>
+      </section>
+
+      <section class="panel">
         <div class="panel-header">
           <h2>Flux service → séquence complète</h2>
-          <p>Chaque rally commençant par un service est représenté avec sa séquence complète jusqu’au résultat final.</p>
+          <p>Chaque rally commençant par un service est représenté avec sa séquence complète jusqu'au résultat final.</p>
         </div>
         <div class="legend-grid">
           <div class="legend-section">
-            <div class="legend-subsection">Catégories d’actions</div>
+            <div class="legend-subsection">Catégories d'actions</div>
             <div class="legend-row">
               <span class="legend-item"><span class="legend-color" style="background: #FF8C00;"></span>Service</span>
               <span class="legend-item"><span class="legend-color" style="background: #20B2AA;"></span>Réception</span>
@@ -55,53 +174,32 @@
         <div id="serviceSequenceSankey"></div>
       </section>
 
-      <section id="filtersSummary" class="summary"></section>
-      <section id="kpiGrid" class="kpi-grid"></section>
-
-      <section class="main-grid">
-        <article class="panel">
-          <div class="panel-header">
-            <h2>Terrain</h2>
-            <p>Cliquez sur un poste pour filtrer les événements.</p>
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Évolution du score</h2>
+            <p>Score cumulé point par point.</p>
           </div>
-          <div id="courtContainer"></div>
-        </article>
-
-        <article class="panel">
-          <div class="panel-header">
-            <h2>Détail</h2>
-            <p>Cliquez sur une catégorie du sunburst pour zoomer.</p>
-          </div>
-          <div class="detail-filter">
-            <label for="setFilterSelect">Filtrer par set :</label>
-            <select id="setFilterSelect" class="score-select">
-              <option value="">Tous les sets</option>
+          <div class="panel-controls">
+            <div id="scoreCategoryFilter" class="score-cat-filter">
+              <button class="score-cat-btn active" data-cat="">Tout</button>
+              <button class="score-cat-btn" data-cat="Service">Service</button>
+              <button class="score-cat-btn" data-cat="Reception">Réception</button>
+              <button class="score-cat-btn" data-cat="Passe">Passe</button>
+              <button class="score-cat-btn" data-cat="Attaque">Attaque</button>
+              <button class="score-cat-btn" data-cat="Block">Block</button>
+              <button class="score-cat-btn" data-cat="Defense">Défense</button>
+            </div>
+            <select id="scoreSetSelect" class="score-select">
               <option value="1">Set 1</option>
               <option value="2">Set 2</option>
               <option value="3">Set 3</option>
               <option value="4">Set 4</option>
             </select>
           </div>
-          <div id="sunburstChart"></div>
-          <div id="detailList"></div>
-          <div id="detailTable"></div>
-        </article>
-      </section>
-
-      <section class="panel">
-        <div class="panel-header">
-          <div>
-            <h2>Évolution du score</h2>
-            <p>Score cumulé point par point, avec sélection d’un set.</p>
-          </div>
-          <select id="scoreSetSelect" class="score-select">
-            <option value="1">Set 1</option>
-            <option value="2">Set 2</option>
-            <option value="3">Set 3</option>
-            <option value="4">Set 4</option>
-          </select>
         </div>
         <div id="scoreboardChart"></div>
+        <div id="scoreCatLegend" class="score-cat-legend"></div>
       </section>
     </div>
 
