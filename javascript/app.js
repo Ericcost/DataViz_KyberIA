@@ -4,16 +4,17 @@ const APP = {
     category: null,
     position: null,
     scoreSet: 1,
+    setFilter: "",
   },
 };
 
 const CAT_COLORS = {
-  Service: "#185FA5",
-  Reception: "#534AB7",
-  Passe: "#993556",
-  Attaque: "#D85A30",
-  Block: "#993C1D",
-  Defense: "#0F6E56",
+  Service: "#FF8C00",
+  Reception: "#20B2AA",
+  Passe: "#8B00FF",
+  Attaque: "#FFFF00",
+  Block: "#8B4513",
+  Defense: "#00FFFF",
 };
 
 const CATEGORY_LABELS = {
@@ -25,8 +26,8 @@ const CATEGORY_LABELS = {
   Defense: "Défense",
 };
 
-const OWN = { 4: [120, 220], 3: [220, 220], 2: [320, 220], 5: [120, 320], 6: [220, 320], 1: [320, 320] };
-const OPP = { 2: [120, 90], 3: [220, 90], 4: [320, 90], 1: [120, 190], 6: [220, 190], 5: [320, 190] };
+const OWN = { 4: [120, 260], 3: [260, 260], 2: [400, 260], 5: [120, 360], 6: [260, 360], 1: [400, 360] };
+const OPP = { 2: [120, 120], 3: [260, 120], 4: [400, 120], 1: [120, 190], 6: [260, 190], 5: [400, 190] };
 
 window.addEventListener("DOMContentLoaded", init);
 
@@ -37,12 +38,15 @@ async function init() {
     document.getElementById("kpiGrid").innerHTML = "<p>Impossible de charger les données.</p>";
     return;
   }
+  normalizeReceptions(APP.data.events);
   bindScoreSetControl();
+  bindSetFilterControl();
   render();
 }
 
 function render() {
   syncScoreSetSelect();
+  syncSetFilterSelect();
   const filtered = getFilteredEvents();
   renderSummary(filtered);
   renderKpis(filtered);
@@ -67,8 +71,16 @@ function getFilteredEvents() {
     });
   }
 
+  if (APP.state.setFilter) {
+    events = events.filter((event) => parseSetFromRally(event.rally) === APP.state.setFilter);
+  }
+
   if (APP.state.category) {
     events = events.filter((event) => event.category === APP.state.category);
+  }
+
+  if (APP.state.subcategory) {
+    events = events.filter((event) => (event.subcategory || "Non précisé") === APP.state.subcategory);
   }
 
   return events;
@@ -81,18 +93,29 @@ function renderSummary(events) {
     const [side, pos] = APP.state.position;
     activeFilters.push(`poste <strong>${pos}</strong> (${side === "own" ? "nous" : "adverse"})`);
   }
+  if (APP.state.setFilter) {
+    activeFilters.push(`set <strong>${APP.state.setFilter}</strong>`);
+  }
   if (APP.state.category) {
     activeFilters.push(`catégorie <strong>${CATEGORY_LABELS[APP.state.category] || APP.state.category}</strong>`);
   }
+  if (APP.state.subcategory) {
+    activeFilters.push(`sous-catégorie <strong>${APP.state.subcategory}</strong>`);
+  }
+  if (APP.state.outcome) {
+    activeFilters.push(`issue <strong>${APP.state.outcome}</strong>`);
+  }
 
+  const { rallyCount } = getVisibleRallyStats(events);
   summary.innerHTML = activeFilters.length
-    ? `Vue filtrée — ${activeFilters.join(" · ")} → <strong>${events.length}</strong> événement(s)`
-    : `Vue unique — <strong>${events.length}</strong> événements de notre équipe`;
+    ? `Vue filtrée — ${activeFilters.join(" · ")} → <strong>${events.length}</strong> événement(s) sur <strong>${rallyCount}</strong> rallye(s)`
+    : `Vue unique — <strong>${events.length}</strong> événements de notre équipe sur <strong>${rallyCount}</strong> rallye(s)`;
 }
 
 function renderKpis(events) {
   const grid = document.getElementById("kpiGrid");
-  const points = events.filter((event) => event.result === "ok" && ["Attaque", "Service", "Block"].includes(event.category)).length;
+  const { rallyCount, pointCount } = getVisibleRallyStats(events);
+  const actionSuccesses = events.filter((event) => event.result === "ok" && ["Attaque", "Service", "Block"].includes(event.category)).length;
   const service = events.filter((event) => event.category === "Service");
   const reception = events.filter((event) => event.category === "Reception");
   const attaque = events.filter((event) => event.category === "Attaque");
@@ -105,7 +128,10 @@ function renderKpis(events) {
   };
 
   const cards = [
-    { label: "Points marqués", value: points, hint: "Actions réussies en attaque/service/block" },
+    { label: "Événements", value: events.length, hint: "Événements affichés dans la vue" },
+    { label: "Rallyes", value: rallyCount, hint: "Rallyes uniques couverts par ces événements" },
+    { label: "Points marqués", value: pointCount, hint: "Points gagnés par notre équipe" },
+    { label: "Actions réussies", value: actionSuccesses, hint: "Services, attaques et blocks réussis" },
     { label: "% service", value: pct(service), hint: "Services réussis" },
     { label: "% réception", value: pct(reception), hint: "Réceptions réussies" },
     { label: "% attaque", value: pct(attaque), hint: "Attaques réussies" },
@@ -128,21 +154,30 @@ function cardMarkup(card) {
 function renderCourt(events) {
   const container = document.getElementById("courtContainer");
   container.innerHTML = "";
-  const svg = createSvgElement("svg", { viewBox: "0 0 460 420", width: "100%", height: "420" });
+  const svg = createSvgElement("svg", { viewBox: "0 0 520 460", width: "100%", height: "460" });
 
   drawCourtBase(svg);
   drawPositions(svg, events);
-  drawRoutes(svg, events);
+  const palette = getRoutePalette(events);
+  drawRoutes(svg, events, palette);
   container.appendChild(svg);
 }
 
+function getRoutePalette(events) {
+  if (!APP.state.category) return {};
+  const subKeys = [...new Set(events
+    .filter((event) => event.category === APP.state.category)
+    .map((event) => event.subcategory || "Non précisé"))].sort();
+  return buildSubcategoryPalette(subKeys, CAT_COLORS[APP.state.category]);
+}
+
 function drawCourtBase(svg) {
-  const court = createSvgElement("rect", { x: 40, y: 60, width: 380, height: 300, rx: 14, fill: "#f8fbff", stroke: "#b9c9da", "stroke-width": 2 });
-  const centerLine = createSvgElement("line", { x1: 230, y1: 60, x2: 230, y2: 360, stroke: "#c4d8e8", "stroke-width": 2 });
-  const topZone = createSvgElement("rect", { x: 40, y: 60, width: 380, height: 150, fill: "none", stroke: "#dce8f3", "stroke-width": 1 });
-  const bottomZone = createSvgElement("rect", { x: 40, y: 210, width: 380, height: 150, fill: "none", stroke: "#dce8f3", "stroke-width": 1 });
-  const labelTop = createSvgElement("text", { x: 230, y: 40, "text-anchor": "middle", fill: "#64748b", "font-size": 14 }, "Terrain adverse");
-  const labelBottom = createSvgElement("text", { x: 230, y: 392, "text-anchor": "middle", fill: "#64748b", "font-size": 14 }, "Notre terrain");
+  const court = createSvgElement("rect", { x: 40, y: 70, width: 440, height: 340, rx: 14, fill: "#f8fbff", stroke: "#b9c9da", "stroke-width": 2 });
+  const centerLine = createSvgElement("line", { x1: 260, y1: 70, x2: 260, y2: 410, stroke: "#c4d8e8", "stroke-width": 2 });
+  const topZone = createSvgElement("rect", { x: 40, y: 70, width: 440, height: 170, fill: "none", stroke: "#dce8f3", "stroke-width": 1 });
+  const bottomZone = createSvgElement("rect", { x: 40, y: 240, width: 440, height: 170, fill: "none", stroke: "#dce8f3", "stroke-width": 1 });
+  const labelTop = createSvgElement("text", { x: 260, y: 50, "text-anchor": "middle", fill: "#64748b", "font-size": 14 }, "Terrain adverse");
+  const labelBottom = createSvgElement("text", { x: 260, y: 438, "text-anchor": "middle", fill: "#64748b", "font-size": 14 }, "Notre terrain");
   svg.append(court, centerLine, topZone, bottomZone, labelTop, labelBottom);
 }
 
@@ -180,10 +215,10 @@ function drawPositions(svg, events) {
   });
 }
 
-function drawRoutes(svg, events) {
+function drawRoutes(svg, events, palette = {}) {
   const grouped = {};
   events.forEach((event) => {
-    const key = [event.category, event.origin, event.origin_side, event.destination, event.dest_side].join("::");
+    const key = [event.category, event.subcategory || "Non précisé", event.origin, event.origin_side, event.destination, event.dest_side].join("::");
     grouped[key] = (grouped[key] || 0) + 1;
   });
 
@@ -192,11 +227,12 @@ function drawRoutes(svg, events) {
   const maxCount = Math.max(...entries.map(([, count]) => count));
 
   entries.forEach(([key, count]) => {
-    const [category, origin, originSide, destination, destSide] = key.split("::");
+    const [category, subcategory, origin, originSide, destination, destSide] = key.split("::");
     const from = getCoords(originSide, Number(origin));
     const to = getCoords(destSide, Number(destination));
     const strokeWidth = 1.6 + Math.sqrt(count / maxCount) * 4.2;
-    drawRoute(svg, from, to, CAT_COLORS[category] || "#185FA5", strokeWidth);
+    const color = palette[subcategory] || CAT_COLORS[category] || "#185FA5";
+    drawRoute(svg, from, to, color, strokeWidth);
   });
 }
 
@@ -232,38 +268,81 @@ function togglePosition(side, pos) {
 
 function renderSunburst(events) {
   const chart = document.getElementById("sunburstChart");
+  const rallyIds = [...new Set(events.map((event) => event.rally))];
+  if (!rallyIds.length) {
+    chart.innerHTML = '<div class="detail-item">Aucune donnée à afficher.</div>';
+    return;
+  }
+
   const ids = ["root"];
   const labels = ["Notre équipe"];
   const parents = [""];
-  const values = [events.length || 0];
+  const values = [rallyIds.length];
   const colors = ["#E5E1D8"];
+  const fullOutcomes = getRallyOutcomes(APP.data.events);
 
-  if (APP.state.category) {
-    const focusEvents = events.filter((event) => event.category === APP.state.category);
-    const bySub = {};
-    focusEvents.forEach((event) => {
-      const sub = event.subcategory || "Non précisé";
-      bySub[sub] = (bySub[sub] || 0) + 1;
-    });
-    Object.entries(bySub).forEach(([sub, count]) => {
-      ids.push(`sub::${APP.state.category}::${sub}`);
-      labels.push(sub);
-      parents.push("root");
-      values.push(count);
-      colors.push(CAT_COLORS[APP.state.category]);
-    });
-  } else {
+  if (!APP.state.category) {
     const byCat = {};
     events.forEach((event) => {
-      byCat[event.category] = (byCat[event.category] || 0) + 1;
+      byCat[event.category] = byCat[event.category] || new Set();
+      byCat[event.category].add(event.rally);
     });
-    Object.entries(byCat).forEach(([category, count]) => {
+    Object.entries(byCat).forEach(([category, rallies]) => {
+      const count = rallies.size;
       ids.push(`cat::${category}`);
       labels.push(CATEGORY_LABELS[category] || category);
       parents.push("root");
       values.push(count);
       colors.push(CAT_COLORS[category]);
     });
+  } else {
+    const focusEvents = events;
+    const bySub = {};
+    focusEvents.forEach((event) => {
+      const sub = event.subcategory || "Non précisé";
+      bySub[sub] = bySub[sub] || { rallies: new Set() };
+      bySub[sub].rallies.add(event.rally);
+    });
+
+    const subKeys = Object.keys(bySub).sort();
+    const palette = buildSubcategoryPalette(subKeys, CAT_COLORS[APP.state.category]);
+
+    if (APP.state.subcategory) {
+      const sub = APP.state.subcategory;
+      const subRallyCount = bySub[sub] ? bySub[sub].rallies.size : 0;
+      ids.push(`sub::${APP.state.category}::${sub}`);
+      labels.push(sub);
+      parents.push("root");
+      values.push(subRallyCount);
+      colors.push(palette[sub] || CAT_COLORS[APP.state.category]);
+
+      const outcomeCounts = countOutcomeRallies(bySub[sub]?.rallies || [], fullOutcomes);
+      Object.entries(outcomeCounts).forEach(([outcome, count]) => {
+        ids.push(`out::${APP.state.category}::${sub}::${outcome}`);
+        labels.push(outcome);
+        parents.push(`sub::${APP.state.category}::${sub}`);
+        values.push(count);
+        colors.push(OUTCOME_COLORS[outcome]);
+      });
+    } else {
+      subKeys.forEach((sub) => {
+        const subRallyCount = bySub[sub].rallies.size;
+        ids.push(`sub::${APP.state.category}::${sub}`);
+        labels.push(sub);
+        parents.push("root");
+        values.push(subRallyCount);
+        colors.push(palette[sub]);
+
+        const outcomeCounts = countOutcomeRallies(bySub[sub].rallies, fullOutcomes);
+        Object.entries(outcomeCounts).forEach(([outcome, count]) => {
+          ids.push(`out::${APP.state.category}::${sub}::${outcome}`);
+          labels.push(outcome);
+          parents.push(`sub::${APP.state.category}::${sub}`);
+          values.push(count);
+          colors.push(OUTCOME_COLORS[outcome]);
+        });
+      });
+    }
   }
 
   const trace = {
@@ -273,7 +352,7 @@ function renderSunburst(events) {
     parents,
     values,
     branchvalues: "total",
-    hovertemplate: "<b>%{label}</b><br>%{value} événement(s)<extra></extra>",
+    hovertemplate: "<b>%{label}</b><br>%{value} rally(s)<extra></extra>",
     marker: { colors, line: { color: "white", width: 1 } },
   };
 
@@ -283,11 +362,105 @@ function renderSunburst(events) {
     if (!id) return;
     if (id === "root") {
       APP.state.category = null;
+      APP.state.subcategory = null;
     } else if (id.startsWith("cat::")) {
       APP.state.category = id.split("::")[1];
+      APP.state.subcategory = null;
+    } else if (id.startsWith("sub::")) {
+      const parts = id.split("::");
+      APP.state.category = parts[1];
+      APP.state.subcategory = parts[2];
+    } else if (id.startsWith("out::")) {
+      const parts = id.split("::");
+      APP.state.category = parts[1];
+      APP.state.subcategory = parts[2];
     }
     render();
   });
+}
+
+const OUTCOME_COLORS = {
+  "Point gagné": "#5C8A2E",
+  "Point perdu": "#C24B3F",
+  "Suite": "#7D93A9",
+};
+
+function buildSubcategoryPalette(keys, baseColor) {
+  const palette = {};
+  const count = keys.length;
+  keys.forEach((key, idx) => {
+    const shift = count === 1 ? 0 : -25 + (50 * idx) / (count - 1);
+    palette[key] = shadeColor(baseColor || "#185FA5", shift);
+  });
+  return palette;
+}
+
+function countOutcomeRallies(rallies, outcomeMap) {
+  const counts = { "Point gagné": 0, "Point perdu": 0, Suite: 0 };
+  rallies.forEach((rally) => {
+    const result = outcomeMap[rally] || "Suite";
+    counts[result] += 1;
+  });
+  return counts;
+}
+
+function getRallyOutcomes(events) {
+  const byPoint = {};
+  events.forEach((event) => {
+    if (!event.point) return;
+    byPoint[event.point] = byPoint[event.point] || [];
+    byPoint[event.point].push(event);
+  });
+
+  const outcomeMap = {};
+  Object.values(byPoint).forEach((pointEvents) => {
+    const byRally = {};
+    pointEvents.forEach((event) => {
+      byRally[event.rally] = byRally[event.rally] || [];
+      byRally[event.rally].push(event);
+    });
+    const rallyIds = Object.keys(byRally).sort((a, b) => Number(a.split("-R")[1]) - Number(b.split("-R")[1]));
+    const lastRallyId = rallyIds[rallyIds.length - 1];
+    const lastEvents = byRally[lastRallyId];
+    const lastEvent = lastEvents[lastEvents.length - 1];
+    let winner = "France";
+    if (lastEvent.category === "Service" && lastEvent.result === "ko") {
+      winner = lastEvent.origin_side === "own" ? "Paraguay" : "France";
+    } else if (lastEvent.category === "Block") {
+      winner = lastEvent.result === "ok" ? (lastEvent.origin_side === "own" ? "France" : "Paraguay") : (lastEvent.origin_side === "own" ? "Paraguay" : "France");
+    } else if (lastEvent.category === "Attaque") {
+      winner = lastEvent.result === "ok" ? (lastEvent.origin_side === "own" ? "France" : "Paraguay") : (lastEvent.origin_side === "own" ? "Paraguay" : "France");
+    }
+    rallyIds.forEach((rallyId, idx) => {
+      outcomeMap[rallyId] = idx === rallyIds.length - 1 ? (winner === "France" ? "Point gagné" : "Point perdu") : "Suite";
+    });
+  });
+  return outcomeMap;
+}
+
+function hexToRgb(hex) {
+  const clean = hex.replace("#", "");
+  const bigint = parseInt(clean, 16);
+  return {
+    r: (bigint >> 16) & 255,
+    g: (bigint >> 8) & 255,
+    b: bigint & 255,
+  };
+}
+
+function rgbToHex(r, g, b) {
+  const toHex = (value) => value.toString(16).padStart(2, "0");
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
+function shadeColor(hex, percent) {
+  const { r, g, b } = hexToRgb(hex);
+  const t = percent < 0 ? 0 : 255;
+  const p = Math.abs(percent) / 100;
+  const R = Math.round((t - r) * p + r);
+  const G = Math.round((t - g) * p + g);
+  const B = Math.round((t - b) * p + b);
+  return rgbToHex(R, G, B);
 }
 
 function renderDetail(events) {
@@ -439,10 +612,32 @@ function bindScoreSetControl() {
   });
 }
 
+function bindSetFilterControl() {
+  const select = document.getElementById("setFilterSelect");
+  if (!select) return;
+  select.addEventListener("change", () => {
+    APP.state.setFilter = select.value;
+    render();
+  });
+}
+
 function syncScoreSetSelect() {
   const select = document.getElementById("scoreSetSelect");
   if (!select) return;
   select.value = String(APP.state.scoreSet || 1);
+}
+
+function syncSetFilterSelect() {
+  const select = document.getElementById("setFilterSelect");
+  if (!select) return;
+  select.value = APP.state.setFilter || "";
+}
+
+function parseSetFromRally(rally) {
+  if (rally == null) return "";
+  const parts = String(rally).split("-");
+  if (!parts.length) return "";
+  return parts[0].replace(/^s/i, "");
 }
 
 function renderPositionSankey(events) {
@@ -773,64 +968,97 @@ function renderRallySankey(events) {
 
 function renderServiceSequenceSankey(events) {
   const chart = document.getElementById("serviceSequenceSankey");
-  const nodes = [];
-  const nodeIndex = {};
-  const links = {};
-
-  const addNode = (label) => {
-    if (!nodeIndex[label]) {
-      nodeIndex[label] = nodes.length;
-      nodes.push(label);
-    }
-    return nodeIndex[label];
-  };
-
-  const addLink = (from, to, count = 1) => {
-    const key = `${from}→${to}`;
-    links[key] = (links[key] || 0) + count;
-    addNode(from);
-    addNode(to);
-  };
-
-  if (!events.length) {
+  const points = getFullPoints(events, APP.data.events);
+  if (!Object.keys(points).length) {
     chart.innerHTML = '<div class="detail-item">Aucune donnée à afficher.</div>';
     return;
   }
 
-  const rallyGroups = {};
-  events.forEach((event) => {
-    rallyGroups[event.rally] ||= [];
-    rallyGroups[event.rally].push(event);
+  const nodeMeta = [];
+  const nodeIndex = {};
+  const links = {};
+  let wonCount = 0;
+  let lostCount = 0;
+  let maxStep = 0;
+
+  Object.values(points).forEach((pointEvents) => {
+    const path = getPointPath(pointEvents);
+    maxStep = Math.max(maxStep, path.length - 1);
+
+    path.forEach((item, step) => {
+      const label = item.label;
+      const side = item.side;
+      const key = `${step}::${label}::${side}`;
+      if (nodeIndex[key] == null) {
+        nodeIndex[key] = nodeMeta.length;
+        nodeMeta.push({ key, label, step, side });
+      }
+    });
+
+    path.forEach((item, step) => {
+      const next = path[step + 1];
+      if (!next) return;
+      const fromKey = `${step}::${item.label}::${item.side}`;
+      const toKey = `${step + 1}::${next.label}::${next.side}`;
+      const linkKey = `${fromKey}→${toKey}`;
+      links[linkKey] = (links[linkKey] || 0) + 1;
+    });
+
+    if (path[path.length - 1].label === "Point gagné") {
+      wonCount += 1;
+    } else {
+      lostCount += 1;
+    }
   });
 
-  const serviceRallies = Object.values(rallyGroups)
-    .map((list) => list.sort((a, b) => a.seq - b.seq))
-    .filter((list) => list.length && list[0].category === "Service");
+  const nodeLabels = nodeMeta.map((node) => node.label);
+  const nodeColors = nodeMeta.map(({ label }) => {
+    if (label === "Service") return CAT_COLORS.Service;
+    if (label === "Reception") return CAT_COLORS.Reception;
+    if (label === "Passe") return CAT_COLORS.Passe;
+    if (label === "Attaque") return CAT_COLORS.Attaque;
+    if (label === "Block") return CAT_COLORS.Block;
+    if (label === "Defense") return CAT_COLORS.Defense;
+    if (label === "Point gagné") return "#00AA00";
+    if (label === "Point perdu") return "#FF0000";
+    return "#8BB8E8";
+  });
 
-  if (!serviceRallies.length) {
-    chart.innerHTML = '<div class="detail-item">Aucun rally de départ Service à afficher.</div>';
-    return;
-  }
+  const nodeBorderColors = nodeMeta.map(({ side }) => {
+    return side === "own" ? "#0066FF" : "#000000";
+  });
 
-  addNode("Service");
+  const nodeBorderWidths = nodeMeta.map(() => 8);
 
-  serviceRallies.forEach((rallyEvents) => {
-    const sequence = rallyEvents.map((event) => CATEGORY_LABELS[event.category] || event.category);
-    const outcome = rallyEvents[rallyEvents.length - 1]?.result === "ok" ? "Point gagné" : "Point perdu";
-    const patternLabel = `${sequence.join(" → ")} → ${outcome}`;
-    addLink("Service", patternLabel, 1);
-    addLink(patternLabel, outcome, 1);
+  const nodeX = nodeMeta.map(({ step }) => (maxStep > 0 ? step / maxStep : 0));
+
+  const stepGroups = {};
+  nodeMeta.forEach(({ step }, idx) => {
+    stepGroups[step] ||= [];
+    stepGroups[step].push(idx);
+  });
+  const nodeY = [];
+  Object.values(stepGroups).forEach((indices) => {
+    const count = indices.length;
+    indices.forEach((nodeIdx, index) => {
+      nodeY[nodeIdx] = (index + 1) / (count + 1);
+    });
   });
 
   const sources = [];
   const targets = [];
   const values = [];
+  const linkColors = [];
 
-  Object.entries(links).forEach(([key, count]) => {
-    const [from, to] = key.split("→");
-    sources.push(nodeIndex[from]);
-    targets.push(nodeIndex[to]);
+  Object.entries(links).forEach(([linkKey, count]) => {
+    const [fromKey, toKey] = linkKey.split("→");
+    const source = nodeIndex[fromKey];
+    const target = nodeIndex[toKey];
+    if (source == null || target == null) return;
+    sources.push(source);
+    targets.push(target);
     values.push(count);
+    linkColors.push("rgba(24,95,165,0.35)");
   });
 
   const trace = {
@@ -839,24 +1067,184 @@ function renderServiceSequenceSankey(events) {
     node: {
       pad: 20,
       thickness: 18,
-      line: { color: "white", width: 1 },
-      label: nodes,
-      color: nodes.map((node) => {
-        if (node === "Service") return "#185FA5";
-        if (node === "Point gagné") return "#5C8A2E";
-        if (node === "Point perdu") return "#C24B3F";
-        return "#8BB8E8";
-      }),
+      line: { color: nodeBorderColors, width: nodeBorderWidths },
+      label: nodeLabels,
+      color: nodeColors,
+      x: nodeX,
+      y: nodeY,
+      hovertemplate: "<b>%{label}</b><br>%{value} cas<extra></extra>",
     },
     link: {
       source: sources,
       target: targets,
       value: values,
-      color: values.map(() => "rgba(24,95,165,0.35)"),
+      color: linkColors,
     },
   };
 
-  Plotly.newPlot(chart, [trace], { height: 420, margin: { l: 20, r: 20, t: 20, b: 20 }, paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)" });
+  Plotly.newPlot(chart, [trace], { height: 700, margin: { l: 10, r: 10, t: 10, b: 10 }, paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)" });
+}
+
+function getFullRallies(scopedEvents, allEvents) {
+  const rallyIds = new Set(scopedEvents.map((event) => event.rally));
+  const rallies = {};
+  allEvents.forEach((event) => {
+    if (rallyIds.has(event.rally)) {
+      rallies[event.rally] ||= [];
+      rallies[event.rally].push(event);
+    }
+  });
+  Object.values(rallies).forEach((rallyEvents) => rallyEvents.sort((a, b) => a.seq - b.seq));
+  return rallies;
+}
+
+function getFullPoints(scopedEvents, allEvents) {
+  const pointIds = new Set(scopedEvents.map((event) => event.point));
+  const points = {};
+
+  allEvents.forEach((event) => {
+    if (pointIds.has(event.point)) {
+      points[event.point] ||= [];
+      points[event.point].push(event);
+    }
+  });
+
+  Object.values(points).forEach((pointEvents) => {
+    pointEvents.sort((a, b) => {
+      const [setA, rallyA] = a.rally.split("-R");
+      const [setB, rallyB] = b.rally.split("-R");
+      const setNumA = Number(setA.slice(1));
+      const setNumB = Number(setB.slice(1));
+      const rallyNumA = Number(rallyA);
+      const rallyNumB = Number(rallyB);
+      return setNumA - setNumB || rallyNumA - rallyNumB || a.seq - b.seq;
+    });
+  });
+
+  return points;
+}
+
+function getPointWinner(pointEvents) {
+  const last = pointEvents[pointEvents.length - 1];
+  if (!last) return "own";
+  if (last.result === "ok") {
+    return last.origin_side === "own" ? "own" : "opponent";
+  }
+  return last.origin_side === "own" ? "opponent" : "own";
+}
+
+function getPointPath(pointEvents) {
+  const path = [{ label: "Service", side: pointEvents[0]?.origin_side || "own" }];
+  const first = pointEvents[0];
+  if (first.category !== "Service") {
+    path[0] = { label: first.category, side: first.origin_side };
+  }
+
+  for (let i = 1; i < pointEvents.length; i += 1) {
+    const event = pointEvents[i];
+    const prev = pointEvents[i - 1];
+
+    if (event.category === "Defense" && prev.category === "Service" && prev.origin_side === "opponent" && event.origin_side === "own") {
+      path.push({ label: "Reception", side: "own" });
+      continue;
+    }
+
+    if (event.category === "Defense" && prev.category === "Service" && prev.origin_side === "own" && event.origin_side === "opponent") {
+      path.push({ label: "Defense", side: "opponent" });
+      continue;
+    }
+
+    if (event.category === "Attaque" || event.category === "Passe" || event.category === "Block") {
+      path.push({ label: event.category, side: event.origin_side });
+      continue;
+    }
+
+    if (event.category === "Service") {
+      path.push({ label: "Service", side: event.origin_side });
+      continue;
+    }
+
+    path.push({ label: event.category, side: event.origin_side });
+  }
+
+  const winner = getPointWinner(pointEvents);
+  path.push({ label: winner === "own" ? "Point gagné" : "Point perdu", side: winner });
+  return path;
+}
+
+function getVisibleRallyStats(events) {
+  const pointMap = {};
+  const pointIds = new Set(events.map((event) => event.point));
+  const rallyIds = new Set();
+
+  APP.data.events.forEach((event) => {
+    if (!pointIds.has(event.point)) return;
+    pointMap[event.point] ||= [];
+    pointMap[event.point].push(event);
+    rallyIds.add(event.rally);
+  });
+
+  const rallyCount = rallyIds.size;
+  let pointCount = 0;
+
+  Object.values(pointMap).forEach((pointEvents) => {
+    const rallies = {};
+    pointEvents.forEach((event) => {
+      rallies[event.rally] ||= [];
+      rallies[event.rally].push(event);
+    });
+    const rallyIdsForPoint = Object.keys(rallies).sort((a, b) => Number(a.split("-R")[1]) - Number(b.split("-R")[1]));
+    const lastRally = rallies[rallyIdsForPoint[rallyIdsForPoint.length - 1]];
+    if (getPointWinner(pointEvents) === "own") {
+      pointCount += 1;
+    }
+  });
+
+  return { rallyCount, pointCount };
+}
+
+function normalizeReceptions(events) {
+  const eventsByPoint = {};
+  events.forEach((event) => {
+    eventsByPoint[event.point] ||= [];
+    eventsByPoint[event.point].push(event);
+  });
+
+  Object.values(eventsByPoint).forEach((pointEvents) => {
+    const rallies = {};
+    pointEvents.forEach((event) => {
+      rallies[event.rally] ||= [];
+      rallies[event.rally].push(event);
+    });
+
+    const rallyIds = Object.keys(rallies).sort((a, b) => Number(a.split("-R")[1]) - Number(b.split("-R")[1]));
+    rallyIds.forEach((rallyId, index) => {
+      if (index === 0) return;
+      const previousRally = rallies[rallyIds[index - 1]].slice().sort((a, b) => a.seq - b.seq);
+      const currentRally = rallies[rallyId].slice().sort((a, b) => a.seq - b.seq);
+      const previousFirst = previousRally[0];
+      const currentFirst = currentRally[0];
+
+      if (
+        previousFirst?.category === "Service" &&
+        previousFirst.origin_side === "opponent" &&
+        currentFirst?.category === "Defense" &&
+        currentFirst.origin_side === "own" &&
+        currentFirst.seq === 1
+      ) {
+        currentFirst.category = "Reception";
+      }
+    });
+  });
+}
+
+function rgba(hex, alpha) {
+  const clean = hex.replace("#", "");
+  const bigint = parseInt(clean, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `rgba(${r},${g},${b},${alpha})`;
 }
 
 function renderScoreboard(events) {

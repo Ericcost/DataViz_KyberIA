@@ -43,8 +43,8 @@
       "point": "S1-P3"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -114,7 +114,7 @@
       "point": "S1-P4"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "MateoP",
       "origin": 5,
@@ -170,7 +170,7 @@
       "point": "S1-P5"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "MateoP",
       "origin": 5,
@@ -226,8 +226,8 @@
       "point": "S1-P6"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Simon",
       "origin": 3,
       "origin_side": "opponent",
@@ -297,7 +297,7 @@
       "point": "S1-P7"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "MateoP",
       "origin": 5,
@@ -353,7 +353,7 @@
       "point": "S1-P8"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Olivier",
       "origin": 5,
@@ -409,8 +409,8 @@
       "point": "S1-P9"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Margot",
       "origin": 3,
       "origin_side": "own",
@@ -438,8 +438,8 @@
       "point": "S1-P10"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -509,8 +509,8 @@
       "point": "S1-P11"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -552,7 +552,7 @@
       "point": "S1-P13"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "MateoP",
       "origin": 5,
@@ -608,7 +608,7 @@
       "point": "S1-P14"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Margot",
       "origin": 5,
@@ -678,7 +678,7 @@
       "point": "S1-P16"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Lucas",
       "origin": 6,
@@ -734,7 +734,7 @@
       "point": "S1-P17"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Olivier",
       "origin": 6,
@@ -790,7 +790,7 @@
       "point": "S1-P18"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Margot",
       "origin": 5,
@@ -846,7 +846,7 @@
       "point": "S1-P19"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Antoine",
       "origin": 5,
@@ -902,8 +902,8 @@
       "point": "S1-P20"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Simon",
       "origin": 3,
       "origin_side": "opponent",
@@ -931,7 +931,7 @@
       "point": "S1-P21"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Margot",
       "origin": 6,
@@ -987,7 +987,7 @@
       "point": "S1-P22"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Antoine",
       "origin": 6,
@@ -1043,7 +1043,7 @@
       "point": "S1-P23"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Mateo",
       "origin": 5,
@@ -1099,7 +1099,7 @@
       "point": "S1-P24"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Pierre",
       "origin": 5,
@@ -1169,8 +1169,8 @@
       "point": "S1-P26"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Simon",
       "origin": 3,
       "origin_side": "opponent",
@@ -1240,8 +1240,8 @@
       "point": "S1-P27"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Simon",
       "origin": 3,
       "origin_side": "opponent",
@@ -1269,8 +1269,8 @@
       "point": "S1-P28"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Antoine",
       "origin": 3,
       "origin_side": "own",
@@ -1354,8 +1354,8 @@
       "point": "S1-P30"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -1425,7 +1425,7 @@
       "point": "S1-P31"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Lucas",
       "origin": 6,
@@ -1481,8 +1481,8 @@
       "point": "S1-P32"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -1510,7 +1510,7 @@
       "point": "S1-P33"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Antoine",
       "origin": 5,
@@ -1566,8 +1566,8 @@
       "point": "S1-P34"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -1595,7 +1595,7 @@
       "point": "S1-P35"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Margot",
       "origin": 5,
@@ -1665,7 +1665,7 @@
       "point": "S1-P37"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "MateoP",
       "origin": 5,
@@ -1721,7 +1721,7 @@
       "point": "S1-P38"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Olivier",
       "origin": 5,
@@ -1777,7 +1777,7 @@
       "point": "S1-P39"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Margot",
       "origin": 5,
@@ -1833,8 +1833,8 @@
       "point": "S1-P40"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -1862,8 +1862,8 @@
       "point": "S1-P41"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Olivier",
       "origin": 4,
       "origin_side": "own",
@@ -1891,7 +1891,7 @@
       "point": "S1-P42"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Lucas",
       "origin": 6,
@@ -1947,7 +1947,7 @@
       "point": "S1-P43"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Lucas",
       "origin": 6,
@@ -2003,7 +2003,7 @@
       "point": "S1-P44"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "MateoP",
       "origin": 5,
@@ -2059,8 +2059,8 @@
       "point": "S1-P45"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -2130,8 +2130,8 @@
       "point": "S1-P46"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -2201,7 +2201,7 @@
       "point": "S1-P47"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Lucas",
       "origin": 6,
@@ -2257,7 +2257,7 @@
       "point": "S1-P48"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "MateoP",
       "origin": 5,
@@ -2313,8 +2313,8 @@
       "point": "S2-P1"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Olivier",
       "origin": 4,
       "origin_side": "own",
@@ -2342,7 +2342,7 @@
       "point": "S2-P2"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Lucas",
       "origin": 6,
@@ -2412,7 +2412,7 @@
       "point": "S2-P4"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Margot",
       "origin": 5,
@@ -2468,7 +2468,7 @@
       "point": "S2-P5"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "MateoP",
       "origin": 5,
@@ -2524,8 +2524,8 @@
       "point": "S2-P6"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Simon",
       "origin": 3,
       "origin_side": "opponent",
@@ -2595,7 +2595,7 @@
       "point": "S2-P7"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "MateoP",
       "origin": 5,
@@ -2665,7 +2665,7 @@
       "point": "S2-P9"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Antoine",
       "origin": 5,
@@ -2721,8 +2721,8 @@
       "point": "S2-P10"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Mateo",
       "origin": 4,
       "origin_side": "own",
@@ -2792,8 +2792,8 @@
       "point": "S2-P11"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Margot",
       "origin": 4,
       "origin_side": "own",
@@ -2863,7 +2863,7 @@
       "point": "S2-P12"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Kheir-Eddine",
       "origin": 6,
@@ -2919,7 +2919,7 @@
       "point": "S2-P13"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Lucas",
       "origin": 6,
@@ -2975,7 +2975,7 @@
       "point": "S2-P14"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Alexandre",
       "origin": 6,
@@ -3031,7 +3031,7 @@
       "point": "S2-P15"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "MateoP",
       "origin": 5,
@@ -3087,7 +3087,7 @@
       "point": "S2-P16"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Lucas",
       "origin": 6,
@@ -3157,7 +3157,7 @@
       "point": "S2-P18"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Olivier",
       "origin": 5,
@@ -3213,7 +3213,7 @@
       "point": "S2-P19"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Margot",
       "origin": 6,
@@ -3269,8 +3269,8 @@
       "point": "S2-P20"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -3298,7 +3298,7 @@
       "point": "S2-P21"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Olivier",
       "origin": 5,
@@ -3368,7 +3368,7 @@
       "point": "S2-P23"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Kheir-Eddine",
       "origin": 5,
@@ -3424,7 +3424,7 @@
       "point": "S2-P24"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "MateoP",
       "origin": 5,
@@ -3494,7 +3494,7 @@
       "point": "S2-P26"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Mateo",
       "origin": 6,
@@ -3550,8 +3550,8 @@
       "point": "S2-P27"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -3579,7 +3579,7 @@
       "point": "S2-P28"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Antoine",
       "origin": 6,
@@ -3635,7 +3635,7 @@
       "point": "S2-P29"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Lucas",
       "origin": 6,
@@ -3691,8 +3691,8 @@
       "point": "S2-P30"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Margot",
       "origin": 3,
       "origin_side": "own",
@@ -3762,8 +3762,8 @@
       "point": "S2-P31"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Kheir-Eddine",
       "origin": 4,
       "origin_side": "own",
@@ -3833,7 +3833,7 @@
       "point": "S2-P32"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Pierre",
       "origin": 6,
@@ -3889,8 +3889,8 @@
       "point": "S2-P33"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Alexandre",
       "origin": 4,
       "origin_side": "own",
@@ -3974,8 +3974,8 @@
       "point": "S2-P35"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Simon",
       "origin": 3,
       "origin_side": "opponent",
@@ -4017,7 +4017,7 @@
       "point": "S2-P37"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "MateoP",
       "origin": 5,
@@ -4073,7 +4073,7 @@
       "point": "S2-P38"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Lucas",
       "origin": 6,
@@ -4129,7 +4129,7 @@
       "point": "S2-P39"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Pierre",
       "origin": 6,
@@ -4185,7 +4185,7 @@
       "point": "S2-P40"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Lucas",
       "origin": 6,
@@ -4241,7 +4241,7 @@
       "point": "S2-P41"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Mateo",
       "origin": 5,
@@ -4297,7 +4297,7 @@
       "point": "S2-P42"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Pierre",
       "origin": 5,
@@ -4353,7 +4353,7 @@
       "point": "S2-P43"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Lucas",
       "origin": 6,
@@ -4423,7 +4423,7 @@
       "point": "S2-P45"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Lucas",
       "origin": 6,
@@ -4479,7 +4479,7 @@
       "point": "S2-P46"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Margot",
       "origin": 5,
@@ -4549,7 +4549,7 @@
       "point": "S2-P48"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Olivier",
       "origin": 6,
@@ -4605,7 +4605,7 @@
       "point": "S2-P49"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Margot",
       "origin": 5,
@@ -4661,8 +4661,8 @@
       "point": "S2-P50"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Antoine",
       "origin": 4,
       "origin_side": "own",
@@ -4704,8 +4704,8 @@
       "point": "S3-P2"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Alexandre",
       "origin": 4,
       "origin_side": "own",
@@ -4747,7 +4747,7 @@
       "point": "S3-P4"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Margot",
       "origin": 6,
@@ -4803,8 +4803,8 @@
       "point": "S3-P5"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Antoine",
       "origin": 4,
       "origin_side": "own",
@@ -4832,7 +4832,7 @@
       "point": "S3-P6"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Lucas",
       "origin": 6,
@@ -4888,7 +4888,7 @@
       "point": "S3-P7"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "MateoP",
       "origin": 5,
@@ -4944,8 +4944,8 @@
       "point": "S3-P8"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -4973,7 +4973,7 @@
       "point": "S3-P9"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Margot",
       "origin": 6,
@@ -5029,8 +5029,8 @@
       "point": "S3-P10"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Antoine",
       "origin": 3,
       "origin_side": "own",
@@ -5058,8 +5058,8 @@
       "point": "S3-P11"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Simon",
       "origin": 3,
       "origin_side": "opponent",
@@ -5129,8 +5129,8 @@
       "point": "S3-P12"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Simon",
       "origin": 3,
       "origin_side": "opponent",
@@ -5172,8 +5172,8 @@
       "point": "S3-P14"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -5243,8 +5243,8 @@
       "point": "S3-P15"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Simon",
       "origin": 3,
       "origin_side": "opponent",
@@ -5272,7 +5272,7 @@
       "point": "S3-P16"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Margot",
       "origin": 5,
@@ -5328,7 +5328,7 @@
       "point": "S3-P17"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Antoine",
       "origin": 5,
@@ -5384,8 +5384,8 @@
       "point": "S3-P18"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -5413,7 +5413,7 @@
       "point": "S3-P19"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Margot",
       "origin": 5,
@@ -5469,7 +5469,7 @@
       "point": "S3-P20"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "MateoP",
       "origin": 5,
@@ -5525,8 +5525,8 @@
       "point": "S3-P21"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -5610,7 +5610,7 @@
       "point": "S3-P23"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Pierre",
       "origin": 5,
@@ -5666,7 +5666,7 @@
       "point": "S3-P24"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Alexandre",
       "origin": 6,
@@ -5722,7 +5722,7 @@
       "point": "S3-P25"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Kheir-Eddine",
       "origin": 6,
@@ -5778,7 +5778,7 @@
       "point": "S3-P26"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Lucas",
       "origin": 6,
@@ -5834,8 +5834,8 @@
       "point": "S3-P27"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -5919,7 +5919,7 @@
       "point": "S3-P29"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Antoine",
       "origin": 5,
@@ -5975,7 +5975,7 @@
       "point": "S3-P30"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Mateo",
       "origin": 6,
@@ -6031,8 +6031,8 @@
       "point": "S3-P31"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -6102,7 +6102,7 @@
       "point": "S3-P32"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "MateoP",
       "origin": 5,
@@ -6158,8 +6158,8 @@
       "point": "S3-P33"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Margot",
       "origin": 4,
       "origin_side": "own",
@@ -6187,8 +6187,8 @@
       "point": "S3-P34"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Simon",
       "origin": 3,
       "origin_side": "opponent",
@@ -6258,7 +6258,7 @@
       "point": "S3-P35"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Lucas",
       "origin": 6,
@@ -6314,8 +6314,8 @@
       "point": "S3-P36"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Simon",
       "origin": 3,
       "origin_side": "opponent",
@@ -6385,8 +6385,8 @@
       "point": "S3-P37"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Simon",
       "origin": 3,
       "origin_side": "opponent",
@@ -6414,7 +6414,7 @@
       "point": "S3-P38"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Olivier",
       "origin": 6,
@@ -6470,7 +6470,7 @@
       "point": "S3-P39"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Margot",
       "origin": 6,
@@ -6526,7 +6526,7 @@
       "point": "S3-P40"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Antoine",
       "origin": 6,
@@ -6582,7 +6582,7 @@
       "point": "S3-P41"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Mateo",
       "origin": 6,
@@ -6652,7 +6652,7 @@
       "point": "S3-P43"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Antoine",
       "origin": 5,
@@ -6708,7 +6708,7 @@
       "point": "S3-P44"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "MateoP",
       "origin": 5,
@@ -6764,7 +6764,7 @@
       "point": "S3-P45"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Lucas",
       "origin": 6,
@@ -6848,7 +6848,7 @@
       "point": "S4-P2"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Antoine",
       "origin": 6,
@@ -6904,7 +6904,7 @@
       "point": "S4-P3"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Lucas",
       "origin": 6,
@@ -6974,7 +6974,7 @@
       "point": "S4-P5"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Kheir-Eddine",
       "origin": 5,
@@ -7030,7 +7030,7 @@
       "point": "S4-P6"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "MateoP",
       "origin": 5,
@@ -7086,7 +7086,7 @@
       "point": "S4-P7"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Lucas",
       "origin": 6,
@@ -7142,8 +7142,8 @@
       "point": "S4-P8"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -7213,7 +7213,7 @@
       "point": "S4-P9"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "MateoP",
       "origin": 5,
@@ -7283,7 +7283,7 @@
       "point": "S4-P11"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "MateoP",
       "origin": 5,
@@ -7353,8 +7353,8 @@
       "point": "S4-P13"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Mateo",
       "origin": 3,
       "origin_side": "own",
@@ -7382,7 +7382,7 @@
       "point": "S4-P14"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Lucas",
       "origin": 6,
@@ -7438,8 +7438,8 @@
       "point": "S4-P15"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -7509,8 +7509,8 @@
       "point": "S4-P16"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Simon",
       "origin": 3,
       "origin_side": "opponent",
@@ -7580,7 +7580,7 @@
       "point": "S4-P17"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "MateoP",
       "origin": 5,
@@ -7636,8 +7636,8 @@
       "point": "S4-P18"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Antoine",
       "origin": 3,
       "origin_side": "own",
@@ -7665,7 +7665,7 @@
       "point": "S4-P19"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "MateoP",
       "origin": 5,
@@ -7721,7 +7721,7 @@
       "point": "S4-P20"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Alexandre",
       "origin": 6,
@@ -7777,8 +7777,8 @@
       "point": "S4-P21"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Kheir-Eddine",
       "origin": 3,
       "origin_side": "own",
@@ -7848,7 +7848,7 @@
       "point": "S4-P22"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Pierre",
       "origin": 5,
@@ -7918,7 +7918,7 @@
       "point": "S4-P24"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Lucas",
       "origin": 6,
@@ -7974,7 +7974,7 @@
       "point": "S4-P25"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Lucas",
       "origin": 6,
@@ -8044,7 +8044,7 @@
       "point": "S4-P27"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "MateoP",
       "origin": 5,
@@ -8100,7 +8100,7 @@
       "point": "S4-P28"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Kheir-Eddine",
       "origin": 5,
@@ -8156,8 +8156,8 @@
       "point": "S4-P29"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Olivier",
       "origin": 3,
       "origin_side": "own",
@@ -8227,7 +8227,7 @@
       "point": "S4-P30"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Alexandre",
       "origin": 6,
@@ -8297,8 +8297,8 @@
       "point": "S4-P32"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Pierre",
       "origin": 3,
       "origin_side": "own",
@@ -8326,7 +8326,7 @@
       "point": "S4-P33"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Lucas",
       "origin": 6,
@@ -8382,7 +8382,7 @@
       "point": "S4-P34"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Plongeon",
       "player": "Lucas",
       "origin": 6,
@@ -8452,8 +8452,8 @@
       "point": "S4-P36"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Marc",
       "origin": 4,
       "origin_side": "opponent",
@@ -8481,8 +8481,8 @@
       "point": "S4-P37"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Mateo",
       "origin": 4,
       "origin_side": "own",
@@ -8510,7 +8510,7 @@
       "point": "S4-P38"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Chase",
       "player": "Lucas",
       "origin": 6,
@@ -8580,8 +8580,8 @@
       "point": "S4-P40"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Pierre",
       "origin": 3,
       "origin_side": "own",
@@ -8609,7 +8609,7 @@
       "point": "S4-P41"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "MateoP",
       "origin": 5,
@@ -8665,7 +8665,7 @@
       "point": "S4-P42"
     },
     {
-      "category": "Defense",
+      "category": "Reception",
       "subcategory": "Freeball",
       "player": "Olivier",
       "origin": 6,
@@ -8721,8 +8721,8 @@
       "point": "S4-P43"
     },
     {
-      "category": "Block",
-      "subcategory": "Contre",
+      "category": "Reception",
+      "subcategory": "Non précisé",
       "player": "Simon",
       "origin": 3,
       "origin_side": "opponent",

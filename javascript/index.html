@@ -11,9 +11,9 @@
     <div class="app-shell">
       <header class="hero">
         <div>
-          <p class="eyebrow">Prototype frontend</p>
-          <h1>Volley Analytics</h1>
-          <p class="subtitle">Cette vue unique montre uniquement les actions de notre équipe, sans sélection de vue ni de type de données.</p>
+          <p class="eyebrow">Kyber IA</p>
+          <h1>France 3 - Paraguay 1</h1>
+          <p class="subtitle">Scenario de match : victoire 3-1 de la France au volley.</p>
         </div>
         <div class="badge">Vue unique</div>
       </header>
@@ -55,6 +55,35 @@
           <h2>Flux service → séquence complète</h2>
           <p>Chaque rally commençant par un service est représenté avec sa séquence complète jusqu’au résultat final.</p>
         </div>
+        <div class="legend-grid">
+          <div class="legend-section">
+            <div class="legend-subsection">Catégories d’actions</div>
+            <div class="legend-row">
+              <span class="legend-item"><span class="legend-color" style="background: #FF8C00;"></span>Service</span>
+              <span class="legend-item"><span class="legend-color" style="background: #20B2AA;"></span>Réception</span>
+              <span class="legend-item"><span class="legend-color" style="background: #8B00FF;"></span>Passe</span>
+            </div>
+            <div class="legend-row">
+              <span class="legend-item"><span class="legend-color" style="background: #FFFF00;"></span>Attaque</span>
+              <span class="legend-item"><span class="legend-color" style="background: #00FFFF;"></span>Défense</span>
+              <span class="legend-item"><span class="legend-color" style="background: #8B4513;"></span>Block</span>
+            </div>
+          </div>
+          <div class="legend-section">
+            <div class="legend-subsection">Résultats</div>
+            <div class="legend-row">
+              <span class="legend-item"><span class="legend-color" style="background: #00AA00;"></span>Point gagné</span>
+              <span class="legend-item"><span class="legend-color" style="background: #FF0000;"></span>Point perdu</span>
+            </div>
+          </div>
+          <div class="legend-section">
+            <div class="legend-subsection">Équipes (bordure des nœuds)</div>
+            <div class="legend-row">
+              <span class="legend-item"><span class="legend-color" style="background: #f0f4f8; border: 6px solid #0066FF;"></span>France (Bleu)</span>
+              <span class="legend-item"><span class="legend-color" style="background: #f0f4f8; border: 6px solid #000000;"></span>Paraguay (Noir)</span>
+            </div>
+          </div>
+        </div>
         <div id="serviceSequenceSankey"></div>
       </section>
 
@@ -74,6 +103,16 @@
           <div class="panel-header">
             <h2>Détail</h2>
             <p>Cliquez sur une catégorie du sunburst pour zoomer.</p>
+          </div>
+          <div class="detail-filter">
+            <label for="setFilterSelect">Filtrer par set :</label>
+            <select id="setFilterSelect" class="score-select">
+              <option value="">Tous les sets</option>
+              <option value="1">Set 1</option>
+              <option value="2">Set 2</option>
+              <option value="3">Set 3</option>
+              <option value="4">Set 4</option>
+            </select>
           </div>
           <div id="sunburstChart"></div>
           <div id="detailList"></div>
