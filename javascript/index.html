@@ -142,34 +142,13 @@
           <h2>Flux service → séquence complète</h2>
           <p>Chaque rally commençant par un service est représenté avec sa séquence complète jusqu'au résultat final.</p>
         </div>
-        <div class="legend-grid">
-          <div class="legend-section">
-            <div class="legend-subsection">Catégories d'actions</div>
-            <div class="legend-row">
-              <span class="legend-item"><span class="legend-color" style="background: #FF8C00;"></span>Service</span>
-              <span class="legend-item"><span class="legend-color" style="background: #20B2AA;"></span>Réception</span>
-              <span class="legend-item"><span class="legend-color" style="background: #8B00FF;"></span>Passe</span>
-            </div>
-            <div class="legend-row">
-              <span class="legend-item"><span class="legend-color" style="background: #FFFF00;"></span>Attaque</span>
-              <span class="legend-item"><span class="legend-color" style="background: #00FFFF;"></span>Défense</span>
-              <span class="legend-item"><span class="legend-color" style="background: #8B4513;"></span>Block</span>
-            </div>
-          </div>
-          <div class="legend-section">
-            <div class="legend-subsection">Résultats</div>
-            <div class="legend-row">
-              <span class="legend-item"><span class="legend-color" style="background: #00AA00;"></span>Point gagné</span>
-              <span class="legend-item"><span class="legend-color" style="background: #FF0000;"></span>Point perdu</span>
-            </div>
-          </div>
-          <div class="legend-section">
-            <div class="legend-subsection">Équipes (couleur des rivières)</div>
-            <div class="legend-row">
-              <span class="legend-item"><span class="legend-color" style="background: rgba(0, 102, 255, 0.4);"></span>France (Bleu)</span>
-              <span class="legend-item"><span class="legend-color" style="background: rgba(0, 0, 0, 0.4);"></span>Paraguay (Noir)</span>
-            </div>
-          </div>
+        <div id="serviceSeqLegend" class="action-seq-legend"></div>
+        <div id="serviceTeamFilter" class="score-cat-filter" style="margin-bottom:10px;"></div>
+        <div class="ssi-row">
+          <span class="ssi-item"><span class="ssi-dot" style="background:#00AA00"></span>Point gagné</span>
+          <span class="ssi-item"><span class="ssi-dot" style="background:#FF0000"></span>Point perdu</span>
+          <span class="ssi-item"><span class="ssi-dot" style="background:rgba(0,102,255,0.5)"></span>France</span>
+          <span class="ssi-item"><span class="ssi-dot" style="background:rgba(0,0,0,0.45)"></span>Paraguay</span>
         </div>
         <div id="serviceSequenceSankey"></div>
       </section>

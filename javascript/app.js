@@ -6,6 +6,8 @@ const APP = {
     scoreSet: 1,
     scoreCategory: null,
     sequenceFilter: null,
+    serviceSeqFilter: null,
+    serviceTeamFilter: null,
     setFilter: "",
     selectedLinks: {},
   },
@@ -109,6 +111,8 @@ function render() {
   renderCourt(filtered);
   renderSunburst(filtered);
   renderDetail(filtered);
+  renderServiceSeqLegend();
+  renderServiceTeamFilter();
   renderServiceSequenceSankey(filtered);
   renderActionSequenceSankey();
   renderActionSeqLegend();
@@ -1020,9 +1024,83 @@ function renderRallySankey(events) {
   Plotly.newPlot(chart, [trace], { height: 420, margin: { l: 20, r: 20, t: 20, b: 20 }, paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)" });
 }
 
+function renderServiceSeqLegend() {
+  const container = document.getElementById("serviceSeqLegend");
+  if (!container) return;
+
+  const categories = ["Service", "Reception", "Passe", "Attaque", "Block", "Defense"];
+  const active = APP.state.serviceSeqFilter;
+
+  container.innerHTML = categories
+    .map((cat) => {
+      const label = CATEGORY_LABELS[cat] || cat;
+      const color = CAT_COLORS[cat] || "#888";
+      const isActive = active === cat;
+      return `<button class="action-seq-btn${isActive ? " active" : ""}" data-cat="${cat}"
+        style="border-color:${color};color:${isActive ? "#fff" : color};background:${isActive ? color : "transparent"}"
+      >${label}</button>`;
+    })
+    .join("");
+
+  container.querySelectorAll(".action-seq-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const cat = btn.dataset.cat;
+      APP.state.serviceSeqFilter = APP.state.serviceSeqFilter === cat ? null : cat;
+      render();
+    });
+  });
+}
+
+function renderServiceTeamFilter() {
+  const container = document.getElementById("serviceTeamFilter");
+  if (!container) return;
+  const options = [
+    { label: "Tout", value: null, color: "var(--primary)" },
+    { label: "France", value: "own", color: "rgba(0,102,255,1)" },
+    { label: "Paraguay", value: "opponent", color: "rgba(80,80,80,1)" },
+  ];
+  const active = APP.state.serviceTeamFilter;
+  container.innerHTML = options.map(({ label, value, color }) => {
+    const isActive = active === value;
+    const dataVal = value === null ? "" : value;
+    return `<button class="score-cat-btn${isActive ? " active" : ""}" data-team="${dataVal}"
+      style="${isActive ? `background:${color};border-color:${color};color:#fff` : `border-color:${color};color:${color}`}">
+      ${label}</button>`;
+  }).join("");
+  container.querySelectorAll(".score-cat-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const val = btn.dataset.team || null;
+      APP.state.serviceTeamFilter = val;
+      render();
+    });
+  });
+}
+
 function renderServiceSequenceSankey(events) {
   const chart = document.getElementById("serviceSequenceSankey");
-  const points = getFullPoints(events, APP.data.events);
+  const allPoints = getFullPoints(events, APP.data.events);
+
+  const serviceFilter = APP.state.serviceSeqFilter;
+  const teamFilter = APP.state.serviceTeamFilter;
+
+  let points = serviceFilter
+    ? Object.fromEntries(
+        Object.entries(allPoints).filter(([, pointEvents]) =>
+          pointEvents.some((e) => e.category === serviceFilter)
+        )
+      )
+    : allPoints;
+
+  if (teamFilter) {
+    points = Object.fromEntries(
+      Object.entries(points).filter(([, pointEvents]) => {
+        const path = getPointPath(pointEvents);
+        const start = serviceFilter ? path.findIndex((item) => item.label === serviceFilter) : 0;
+        return start >= 0 && path[start]?.side === teamFilter;
+      })
+    );
+  }
+
   if (!Object.keys(points).length) {
     chart.innerHTML = '<div class="detail-item">Aucune donnée à afficher.</div>';
     return;
@@ -1031,38 +1109,35 @@ function renderServiceSequenceSankey(events) {
   const nodeMeta = [];
   const nodeIndex = {};
   const links = {};
-  let wonCount = 0;
-  let lostCount = 0;
   let maxStep = 0;
 
+  const isTerminalLabel = (label) => label === "Point gagné" || label === "Point perdu";
+
   Object.values(points).forEach((pointEvents) => {
-    const path = getPointPath(pointEvents);
+    let path = getPointPath(pointEvents);
+    if (serviceFilter) {
+      const startIdx = path.findIndex((item) => item.label === serviceFilter);
+      if (startIdx === -1) return;
+      path = path.slice(startIdx);
+    }
     maxStep = Math.max(maxStep, path.length - 1);
 
+    // Register nodes by category only (no team separation — avoids structural crossings)
     path.forEach((item, step) => {
-      const label = item.label;
-      const side = item.side;
-      const key = `${step}::${label}::${side}`;
+      const key = `${step}::${item.label}`;
       if (nodeIndex[key] == null) {
         nodeIndex[key] = nodeMeta.length;
-        nodeMeta.push({ key, label, step, side });
+        nodeMeta.push({ key, label: item.label, step });
       }
     });
 
+    // Register links — include source side in key to preserve team color on links
     path.forEach((item, step) => {
       const next = path[step + 1];
       if (!next) return;
-      const fromKey = `${step}::${item.label}::${item.side}`;
-      const toKey = `${step + 1}::${next.label}::${next.side}`;
-      const linkKey = `${fromKey}→${toKey}`;
+      const linkKey = `${step}::${item.label}::${item.side}→${step + 1}::${next.label}`;
       links[linkKey] = (links[linkKey] || 0) + 1;
     });
-
-    if (path[path.length - 1].label === "Point gagné") {
-      wonCount += 1;
-    } else {
-      lostCount += 1;
-    }
   });
 
   const nodeLabels = nodeMeta.map((node) => node.label);
@@ -1081,71 +1156,97 @@ function renderServiceSequenceSankey(events) {
   const nodeX = nodeMeta.map(({ step }) => (maxStep > 0 ? step / maxStep : 0));
 
   const stepGroups = {};
-  nodeMeta.forEach(({ step }, idx) => {
-    stepGroups[step] ||= [];
-    stepGroups[step].push(idx);
-  });
-  const nodeY = [];
-  Object.values(stepGroups).forEach((indices) => {
-    const count = indices.length;
-    indices.forEach((nodeIdx, index) => {
-      nodeY[nodeIdx] = (index + 1) / (count + 1);
-    });
-  });
+  nodeMeta.forEach(({ step }, idx) => { stepGroups[step] ||= []; stepGroups[step].push(idx); });
 
+  // Build sources/targets/values
   const sources = [];
   const targets = [];
   const values = [];
   const linkColors = [];
 
-  let linkIndex = 0;
+  const CAT_PRIORITY = ["Service","Reception","Passe","Attaque","Block","Defense","Point gagné","Point perdu"];
+  const catRank = (label) => { const i = CAT_PRIORITY.indexOf(label); return i >= 0 ? i : 99; };
+
   Object.entries(links).forEach(([linkKey, count]) => {
-    const [fromKey, toKey] = linkKey.split("→");
+    const arrowIdx = linkKey.indexOf("→");
+    const fromPart = linkKey.slice(0, arrowIdx); // "step::label::side"
+    const toKey = linkKey.slice(arrowIdx + 1);   // "step::label"
+    const [fStep, fLabel, side] = fromPart.split("::");
+    const fromKey = `${fStep}::${fLabel}`;
     const source = nodeIndex[fromKey];
     const target = nodeIndex[toKey];
     if (source == null || target == null) return;
-
-    const sourceNode = nodeMeta[source];
-    const step = sourceNode.step;
-    const isSelected = APP.state.selectedLinks[step] === linkIndex;
-    const hasSelectionOnThisStep = APP.state.selectedLinks[step] != null;
-
-    let linkColor;
-    const baseColor = sourceNode.side === "own" ? "rgba(0, 102, 255" : "rgba(0, 0, 0";
-
-    if (isSelected) {
-      linkColor = baseColor + ", 0.8)";      // Saturé quand sélectionné
-    } else if (hasSelectionOnThisStep) {
-      linkColor = baseColor + ", 0.1)";      // Très léger quand d'autres sont sélectionnés
-    } else {
-      linkColor = baseColor + ", 0.3)";      // Léger par défaut
-    }
-
     sources.push(source);
     targets.push(target);
-    values.push(count);
-    linkColors.push(linkColor);
-    linkIndex++;
+    values.push(count * 0.1);
+    linkColors.push(side === "own" ? "rgba(0, 102, 255, 0.22)" : "rgba(80, 80, 80, 0.22)");
   });
 
-  const nodeColorsWithTeam = nodeColors.map((color, idx) => {
-    const side = nodeMeta[idx].side;
-    if (side === "own") {
-      return color;
+  // Y positioning: unified barycenter (no band separation — eliminates structural crossings)
+  const nodeY = new Array(nodeMeta.length).fill(0.5);
+
+  const assignStep = (stepIdx, sorted) => {
+    sorted.forEach((idx, i) => { nodeY[idx] = (i + 1) / (sorted.length + 1); });
+  };
+
+  // Initialize by category priority
+  for (let step = 0; step <= maxStep; step++) {
+    const sorted = (stepGroups[step] || []).slice().sort((a, b) => catRank(nodeMeta[a].label) - catRank(nodeMeta[b].label));
+    assignStep(step, sorted);
+  }
+
+  // 3-pass barycenter: forward, backward, forward
+  for (let pass = 0; pass < 3; pass++) {
+    if (pass % 2 === 0) {
+      for (let step = 1; step <= maxStep; step++) {
+        const nodes = stepGroups[step] || [];
+        const bary = {};
+        nodes.forEach((idx) => { bary[idx] = { sum: 0, w: 0 }; });
+        sources.forEach((src, i) => {
+          const tgt = targets[i];
+          if (nodeMeta[src].step === step - 1 && bary[tgt] != null) {
+            bary[tgt].sum += nodeY[src] * values[i];
+            bary[tgt].w += values[i];
+          }
+        });
+        const sorted = [...nodes].sort((a, b) => {
+          const ya = bary[a].w > 0 ? bary[a].sum / bary[a].w : nodeY[a];
+          const yb = bary[b].w > 0 ? bary[b].sum / bary[b].w : nodeY[b];
+          return ya - yb;
+        });
+        assignStep(step, sorted);
+      }
     } else {
-      return rgba(color, 0.6);
+      for (let step = maxStep - 1; step >= 0; step--) {
+        const nodes = stepGroups[step] || [];
+        const bary = {};
+        nodes.forEach((idx) => { bary[idx] = { sum: 0, w: 0 }; });
+        sources.forEach((src, i) => {
+          const tgt = targets[i];
+          if (nodeMeta[tgt].step === step + 1 && bary[src] != null) {
+            bary[src].sum += nodeY[tgt] * values[i];
+            bary[src].w += values[i];
+          }
+        });
+        const sorted = [...nodes].sort((a, b) => {
+          const ya = bary[a].w > 0 ? bary[a].sum / bary[a].w : nodeY[a];
+          const yb = bary[b].w > 0 ? bary[b].sum / bary[b].w : nodeY[b];
+          return ya - yb;
+        });
+        assignStep(step, sorted);
+      }
     }
-  });
+  }
 
   const trace = {
     type: "sankey",
     arrangement: "snap",
     node: {
-      pad: 20,
-      thickness: 20,
-      line: { color: "white", width: 6 },
+      pad: 60,
+      thickness: 12,
+      line: { color: "white", width: 2 },
       label: nodeLabels,
-      color: nodeColorsWithTeam,
+      color: nodeColors,
       x: nodeX,
       y: nodeY,
       hovertemplate: "<b>%{label}</b><br>%{value} cas<extra></extra>",
@@ -1158,34 +1259,7 @@ function renderServiceSequenceSankey(events) {
     },
   };
 
-  Plotly.newPlot(chart, [trace], { height: 700, margin: { l: 10, r: 10, t: 10, b: 10 }, paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)" });
-
-  chart.on("plotly_click", (data) => {
-    const pointData = data.points[0];
-    if (pointData.pointNumber == null) return;
-
-    const linkIdx = pointData.pointNumber;
-    let currentLink = 0;
-
-    Object.entries(links).forEach(([linkKey, count]) => {
-      const [fromKey, toKey] = linkKey.split("→");
-      const source = nodeIndex[fromKey];
-      if (source == null) return;
-
-      if (currentLink === linkIdx) {
-        const sourceNode = nodeMeta[source];
-        const step = sourceNode.step;
-
-        if (APP.state.selectedLinks[step] === linkIdx) {
-          delete APP.state.selectedLinks[step];
-        } else {
-          APP.state.selectedLinks[step] = linkIdx;
-        }
-        render();
-      }
-      currentLink++;
-    });
-  });
+  Plotly.newPlot(chart, [trace], { height: 520, margin: { l: 10, r: 10, t: 10, b: 10 }, paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)" });
 }
 
 function getFullRallies(scopedEvents, allEvents) {
@@ -1443,11 +1517,11 @@ function renderScoreboard() {
         type: "rect",
         xref: "x",
         yref: "paper",
-        x0: i + 0.5,
-        x1: i + 1.5,
+        x0: i + 0.93,
+        x1: i + 1.07,
         y0: 0,
         y1: 1,
-        fillcolor: rgba(subcatColors[subcat] || "#888888", 0.22),
+        fillcolor: rgba(subcatColors[subcat] || "#888888", 0.55),
         line: { width: 0 },
         layer: "below",
       });
