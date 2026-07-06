@@ -265,8 +265,7 @@ function togglePosition(side, pos) {
 
 function renderSunburst(events) {
   const chart = document.getElementById("sunburstChart");
-  const rallyIds = [...new Set(events.map((event) => event.rally))];
-  if (!rallyIds.length) {
+  if (!events.length) {
     chart.innerHTML = '<div class="detail-item">Aucune donnée à afficher.</div>';
     return;
   }
@@ -274,18 +273,17 @@ function renderSunburst(events) {
   const ids = ["root"];
   const labels = ["Notre équipe"];
   const parents = [""];
-  const values = [rallyIds.length];
+  const values = [events.length];
   const colors = ["#E5E1D8"];
   const fullOutcomes = getRallyOutcomes(APP.data.events);
 
   if (!APP.state.category) {
     const byCat = {};
     events.forEach((event) => {
-      byCat[event.category] = byCat[event.category] || new Set();
-      byCat[event.category].add(event.rally);
+      byCat[event.category] = byCat[event.category] || 0;
+      byCat[event.category] += 1;
     });
-    Object.entries(byCat).forEach(([category, rallies]) => {
-      const count = rallies.size;
+    Object.entries(byCat).forEach(([category, count]) => {
       ids.push(`cat::${category}`);
       labels.push(CATEGORY_LABELS[category] || category);
       parents.push("root");
@@ -293,11 +291,11 @@ function renderSunburst(events) {
       colors.push(CAT_COLORS[category]);
     });
   } else {
-    const focusEvents = events;
     const bySub = {};
-    focusEvents.forEach((event) => {
+    events.forEach((event) => {
       const sub = event.subcategory || "Non précisé";
-      bySub[sub] = bySub[sub] || { rallies: new Set() };
+      bySub[sub] = bySub[sub] || { count: 0, rallies: new Set() };
+      bySub[sub].count += 1;
       bySub[sub].rallies.add(event.rally);
     });
 
@@ -306,14 +304,14 @@ function renderSunburst(events) {
 
     if (APP.state.subcategory) {
       const sub = APP.state.subcategory;
-      const subRallyCount = bySub[sub] ? bySub[sub].rallies.size : 0;
+      const subCount = bySub[sub] ? bySub[sub].count : 0;
       ids.push(`sub::${APP.state.category}::${sub}`);
       labels.push(sub);
       parents.push("root");
-      values.push(subRallyCount);
+      values.push(subCount);
       colors.push(palette[sub] || CAT_COLORS[APP.state.category]);
 
-      const outcomeCounts = countOutcomeRallies(bySub[sub]?.rallies || [], fullOutcomes);
+      const outcomeCounts = countOutcomeEvents(bySub[sub]?.rallies || [], fullOutcomes, events);
       Object.entries(outcomeCounts).forEach(([outcome, count]) => {
         ids.push(`out::${APP.state.category}::${sub}::${outcome}`);
         labels.push(outcome);
@@ -323,14 +321,14 @@ function renderSunburst(events) {
       });
     } else {
       subKeys.forEach((sub) => {
-        const subRallyCount = bySub[sub].rallies.size;
+        const subCount = bySub[sub].count;
         ids.push(`sub::${APP.state.category}::${sub}`);
         labels.push(sub);
         parents.push("root");
-        values.push(subRallyCount);
+        values.push(subCount);
         colors.push(palette[sub]);
 
-        const outcomeCounts = countOutcomeRallies(bySub[sub].rallies, fullOutcomes);
+        const outcomeCounts = countOutcomeEvents(bySub[sub].rallies, fullOutcomes, events);
         Object.entries(outcomeCounts).forEach(([outcome, count]) => {
           ids.push(`out::${APP.state.category}::${sub}::${outcome}`);
           labels.push(outcome);
@@ -349,7 +347,7 @@ function renderSunburst(events) {
     parents,
     values,
     branchvalues: "total",
-    hovertemplate: "<b>%{label}</b><br>%{value} rally(s)<extra></extra>",
+    hovertemplate: "<b>%{label}</b><br>%{value} événement(s)<extra></extra>",
     marker: { colors, line: { color: "white", width: 1 } },
   };
 
@@ -392,10 +390,12 @@ function buildSubcategoryPalette(keys, baseColor) {
   return palette;
 }
 
-function countOutcomeRallies(rallies, outcomeMap) {
+function countOutcomeEvents(rallies, outcomeMap, events) {
   const counts = { "Point gagné": 0, "Point perdu": 0, Suite: 0 };
-  rallies.forEach((rally) => {
-    const result = outcomeMap[rally] || "Suite";
+  const rallySet = new Set(rallies);
+  events.forEach((event) => {
+    if (!rallySet.has(event.rally)) return;
+    const result = outcomeMap[event.rally] || "Suite";
     counts[result] += 1;
   });
   return counts;
@@ -1295,50 +1295,76 @@ function rgba(hex, alpha) {
 
 function renderScoreboard(events) {
   const chart = document.getElementById("scoreboardChart");
-  const traces = [];
-  const syntheticSets = getSyntheticSetScores();
-  const selectedSets = [String(APP.state.scoreSet || 1)];
+  const selectedSet = String(APP.state.scoreSet || 1);
+  const setEvents = events.filter((event) => String(event.set) === selectedSet);
 
-  selectedSets.forEach((setNo) => {
-    const setData = syntheticSets.find((entry) => String(entry.set) === setNo);
-    if (!setData) return;
+  if (!setEvents.length) {
+    chart.innerHTML = '<div class="detail-item">Aucune donnée à afficher.</div>';
+    return;
+  }
 
-    const ownX = [];
-    const ownY = [];
-    const oppX = [];
-    const oppY = [];
+  const pointIds = new Set(setEvents.map((event) => event.point));
+  const pointGroups = {};
 
-    setData.progression.forEach(([ownScore, oppScore], index) => {
-      ownX.push(index + 1);
-      ownY.push(ownScore);
-      oppX.push(index + 1);
-      oppY.push(oppScore);
-    });
+  APP.data.events.forEach((event) => {
+    if (String(event.set) !== selectedSet || !pointIds.has(event.point)) return;
+    pointGroups[event.point] ||= [];
+    pointGroups[event.point].push(event);
+  });
 
-    traces.push({
+  const orderedPointIds = Object.keys(pointGroups).sort((a, b) => {
+    const pointA = Number((a.match(/-P(\d+)$/) || [])[1] || 0);
+    const pointB = Number((b.match(/-P(\d+)$/) || [])[1] || 0);
+    return pointA - pointB;
+  });
+
+  const ownX = [];
+  const ownY = [];
+  const oppX = [];
+  const oppY = [];
+  let ownScore = 0;
+  let oppScore = 0;
+
+  orderedPointIds.forEach((pointId, index) => {
+    const pointEvents = pointGroups[pointId]
+      .slice()
+      .sort((a, b) => a.seq - b.seq || Number((a.rally.match(/-(\d+)$/) || [])[1] || 0) - Number((b.rally.match(/-(\d+)$/) || [])[1] || 0));
+    const winner = getPointWinner(pointEvents);
+
+    if (winner === "own") ownScore += 1;
+    else oppScore += 1;
+
+    ownX.push(index + 1);
+    ownY.push(ownScore);
+    oppX.push(index + 1);
+    oppY.push(oppScore);
+  });
+
+  const traces = [
+    {
       x: ownX,
       y: ownY,
       type: "scatter",
       mode: "lines",
       line: { color: "#185FA5", width: 2.5 },
-      name: `Nous - Set ${setNo}`,
-    });
-    traces.push({
+      name: `Nous - Set ${selectedSet}`,
+    },
+    {
       x: oppX,
       y: oppY,
       type: "scatter",
       mode: "lines",
       line: { color: "#B4441C", width: 2.2, dash: "dot" },
-      name: `Adversaire - Set ${setNo}`,
-    });
-  });
+      name: `Adversaire - Set ${selectedSet}`,
+    },
+  ];
 
   Plotly.newPlot(chart, traces, {
     height: 340,
     margin: { l: 10, r: 10, t: 30, b: 10 },
-    xaxis: { title: "Rally n°" },
+    xaxis: { title: "Point n°" },
     yaxis: { title: "Points cumulés" },
     paper_bgcolor: "rgba(0,0,0,0)",
-    plot_bgcolor: "rgba(0,0,0,0)" 
+    plot_bgcolor: "rgba(0,0,0,0)",
   });
 }
