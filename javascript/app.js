@@ -53,10 +53,6 @@ function render() {
   renderCourt(filtered);
   renderSunburst(filtered);
   renderDetail(filtered);
-  renderSankey(filtered);
-  renderPositionSankey(filtered);
-  renderSetSankey(filtered);
-  renderRallySankey(filtered);
   renderServiceSequenceSankey(filtered);
   renderScoreboard(filtered);
 }
@@ -1024,12 +1020,6 @@ function renderServiceSequenceSankey(events) {
     return "#8BB8E8";
   });
 
-  const nodeBorderColors = nodeMeta.map(({ side }) => {
-    return side === "own" ? "#0066FF" : "#000000";
-  });
-
-  const nodeBorderWidths = nodeMeta.map(() => 8);
-
   const nodeX = nodeMeta.map(({ step }) => (maxStep > 0 ? step / maxStep : 0));
 
   const stepGroups = {};
@@ -1055,10 +1045,25 @@ function renderServiceSequenceSankey(events) {
     const source = nodeIndex[fromKey];
     const target = nodeIndex[toKey];
     if (source == null || target == null) return;
+
+    const sourceNode = nodeMeta[source];
+    const linkColor = sourceNode.side === "own"
+      ? "rgba(0, 102, 255, 0.4)"    // Bleu pour France
+      : "rgba(0, 0, 0, 0.4)";        // Noir pour Paraguay
+
     sources.push(source);
     targets.push(target);
     values.push(count);
-    linkColors.push("rgba(24,95,165,0.35)");
+    linkColors.push(linkColor);
+  });
+
+  const nodeColorsWithTeam = nodeColors.map((color, idx) => {
+    const side = nodeMeta[idx].side;
+    if (side === "own") {
+      return color;
+    } else {
+      return rgba(color, 0.6);
+    }
   });
 
   const trace = {
@@ -1066,10 +1071,10 @@ function renderServiceSequenceSankey(events) {
     arrangement: "snap",
     node: {
       pad: 20,
-      thickness: 18,
-      line: { color: nodeBorderColors, width: nodeBorderWidths },
+      thickness: 20,
+      line: { color: "white", width: 6 },
       label: nodeLabels,
-      color: nodeColors,
+      color: nodeColorsWithTeam,
       x: nodeX,
       y: nodeY,
       hovertemplate: "<b>%{label}</b><br>%{value} cas<extra></extra>",
