@@ -5,6 +5,7 @@ const APP = {
     position: null,
     scoreSet: 1,
     scoreCategory: null,
+    sequenceFilter: null,
     setFilter: "",
     selectedLinks: {},
   },
@@ -109,6 +110,8 @@ function render() {
   renderSunburst(filtered);
   renderDetail(filtered);
   renderServiceSequenceSankey(filtered);
+  renderActionSequenceSankey();
+  renderActionSeqLegend();
   renderScoreboard();
 }
 
@@ -1470,4 +1473,171 @@ function renderScoreboard() {
   );
 
   renderScoreCatLegend(subcatColors);
+}
+
+function renderActionSeqLegend() {
+  const container = document.getElementById("actionSeqLegend");
+  if (!container) return;
+
+  const categories = ["Service", "Reception", "Passe", "Attaque", "Block", "Defense"];
+  const active = APP.state.sequenceFilter;
+
+  container.innerHTML = categories
+    .map((cat) => {
+      const label = CATEGORY_LABELS[cat] || cat;
+      const color = CAT_COLORS[cat] || "#888";
+      const isActive = active === cat;
+      return `<button class="action-seq-btn${isActive ? " active" : ""}" data-cat="${cat}"
+        style="border-color:${color};color:${isActive ? "#fff" : color};background:${isActive ? color : "transparent"}"
+      >${label}</button>`;
+    })
+    .join("");
+
+  container.querySelectorAll(".action-seq-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const cat = btn.dataset.cat;
+      APP.state.sequenceFilter = APP.state.sequenceFilter === cat ? null : cat;
+      render();
+    });
+  });
+}
+
+function renderActionSequenceSankey() {
+  const chart = document.getElementById("actionSequenceSankey");
+  if (!chart) return;
+
+  // Group all events by rally, sorted by seq
+  const byRally = {};
+  APP.data.events.forEach((e) => {
+    byRally[e.rally] = byRally[e.rally] || [];
+    byRally[e.rally].push(e);
+  });
+  Object.values(byRally).forEach((evts) => evts.sort((a, b) => (a.seq || 0) - (b.seq || 0)));
+
+  const filter = APP.state.sequenceFilter;
+
+  // Build N→N+1 and (contextual) N+1→N+2 transition counts
+  const trans01 = {};
+  const trans12 = {};
+  const origCounts01 = {};
+  const origCounts12 = {};
+
+  Object.values(byRally).forEach((evts) => {
+    for (let i = 0; i < evts.length; i++) {
+      const cat0 = evts[i]?.category;
+      if (!cat0) continue;
+      if (filter && cat0 !== filter) continue;
+
+      const cat1 = evts[i + 1]?.category;
+      const cat2 = evts[i + 2]?.category;
+
+      if (cat1) {
+        trans01[cat0] = trans01[cat0] || {};
+        trans01[cat0][cat1] = (trans01[cat0][cat1] || 0) + 1;
+
+        if (cat2) {
+          trans12[cat1] = trans12[cat1] || {};
+          trans12[cat1][cat2] = (trans12[cat1][cat2] || 0) + 1;
+        }
+      }
+    }
+  });
+
+  if (!Object.keys(trans01).length) {
+    chart.innerHTML = '<div class="detail-item">Aucune transition à afficher.</div>';
+    return;
+  }
+
+  // Build step-qualified nodes
+  const nodeIndex = {};
+  const nodeMeta = [];
+
+  const addNode = (step, cat) => {
+    const key = `${step}::${cat}`;
+    if (nodeIndex[key] == null) {
+      nodeIndex[key] = nodeMeta.length;
+      nodeMeta.push({ key, step, cat });
+    }
+    return nodeIndex[key];
+  };
+
+  const sources = [], targets = [], values = [], origCounts = [], linkColors = [];
+
+  Object.entries(trans01).forEach(([cat0, nexts]) => {
+    addNode(0, cat0);
+    Object.entries(nexts).forEach(([cat1, count]) => {
+      addNode(1, cat1);
+      sources.push(nodeIndex[`0::${cat0}`]);
+      targets.push(nodeIndex[`1::${cat1}`]);
+      values.push(count * 0.1);
+      origCounts.push(count);
+      linkColors.push(rgba(CAT_COLORS[cat0] || "#888888", 0.35));
+    });
+  });
+
+  Object.entries(trans12).forEach(([cat1, nexts]) => {
+    addNode(1, cat1);
+    Object.entries(nexts).forEach(([cat2, count]) => {
+      addNode(2, cat2);
+      sources.push(nodeIndex[`1::${cat1}`]);
+      targets.push(nodeIndex[`2::${cat2}`]);
+      values.push(count * 0.1);
+      origCounts.push(count);
+      linkColors.push(rgba(CAT_COLORS[cat1] || "#888888", 0.35));
+    });
+  });
+
+  // Position nodes by step
+  const stepGroups = {};
+  nodeMeta.forEach(({ step }, idx) => {
+    stepGroups[step] = stepGroups[step] || [];
+    stepGroups[step].push(idx);
+  });
+
+  const stepX = [0.02, 0.5, 0.98];
+  const nodeX = nodeMeta.map(({ step }) => stepX[step]);
+  const nodeY = new Array(nodeMeta.length);
+  Object.values(stepGroups).forEach((indices) => {
+    indices.forEach((nodeIdx, i) => {
+      nodeY[nodeIdx] = (i + 1) / (indices.length + 1);
+    });
+  });
+
+  const nodeLabels = nodeMeta.map(({ cat }) => CATEGORY_LABELS[cat] || cat);
+  const nodeColors = nodeMeta.map(({ cat }) => CAT_COLORS[cat] || "#8BB8E8");
+
+  const trace = {
+    type: "sankey",
+    arrangement: "snap",
+    node: {
+      pad: 18,
+      thickness: 12,
+      line: { color: "white", width: 1 },
+      label: nodeLabels,
+      color: nodeColors,
+      x: nodeX,
+      y: nodeY,
+      hovertemplate: "<b>%{label}</b><extra></extra>",
+    },
+    link: {
+      source: sources,
+      target: targets,
+      value: values,
+      customdata: origCounts,
+      color: linkColors,
+      hovertemplate: "<b>%{source.label} → %{target.label}</b><br>%{customdata} transitions<extra></extra>",
+    },
+  };
+
+  Plotly.newPlot(chart, [trace], {
+    height: 420,
+    margin: { l: 10, r: 10, t: 36, b: 10 },
+    annotations: [
+      { text: "N — Action", x: 0.02, y: 1.06, xref: "paper", yref: "paper", showarrow: false, font: { size: 12, color: "#64748b" }, xanchor: "left" },
+      { text: "N+1 — Suivant", x: 0.5, y: 1.06, xref: "paper", yref: "paper", showarrow: false, font: { size: 12, color: "#64748b" }, xanchor: "center" },
+      { text: "N+2 — Après", x: 0.98, y: 1.06, xref: "paper", yref: "paper", showarrow: false, font: { size: 12, color: "#64748b" }, xanchor: "right" },
+    ],
+    paper_bgcolor: "rgba(0,0,0,0)",
+    plot_bgcolor: "rgba(0,0,0,0)",
+  });
 }

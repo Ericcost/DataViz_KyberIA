@@ -298,6 +298,28 @@ h1, h2, h3, p { margin: 0; }
   flex-shrink: 0;
 }
 
+.action-seq-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.action-seq-btn {
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 2px solid;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: transparent;
+  transition: color 0.15s, background 0.15s;
+}
+
+.action-seq-btn.active {
+  color: #fff !important;
+}
+
 .legend-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
